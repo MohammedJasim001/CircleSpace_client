@@ -2,9 +2,9 @@
 
 import { useEffect, useState } from "react";
 import { getUserId } from "@/utils/userId";
-import { useCreatePost } from "@/hooks/useCreatePost";
 import PostCreate from "@/components/ui/postCreate";
 import withMainLayout from "@/components/WithMainLayout";
+import { useCreatePost } from "@/hooks/usePosts";
 
  function CreatePostPage() {
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);

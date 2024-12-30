@@ -36,3 +36,14 @@ export const createPostApi = async (formData: FormData ,id:string)=>{
       }
     }
 }
+
+
+export const likeToggleApi = async (userId:string,postId:string)=>{
+  try {
+    const res = await api.post('/user/posts/like',{userId,postId})
+    return res.data
+  } catch (error) {
+    console.log(error)
+    throw error
+  }
+}

@@ -4,97 +4,95 @@
 import React, { useState } from "react";
 import { FaRegComment, FaRegHeart, FaHeart } from "react-icons/fa6";
 import { FiSend } from "react-icons/fi";
-import { AiOutlineSave } from "react-icons/ai";
 import { formatDistanceToNow } from "date-fns";
-import { useRouter } from "next/navigation"; // Adjusted to `next/navigation` for the latest Next.js version
+import { useRouter } from "next/navigation";
 import { FaUserCircle } from "react-icons/fa";
 import { MdBookmarkBorder } from "react-icons/md";
-// import CommentModal from "@/components/modals/commentModal";
+import { toast } from "react-toastify";
+import useLike from "@/hooks/useLikes";
 
 interface Comment {
-  _id:string
-  author: {  userName: string; profileImage: string };
+  _id: string;
+  author: { userName: string; profileImage: string };
   content: string;
 }
 
 interface Post {
-
   _id: string;
-     image: string;
-     description: string;
-     likes: string[];
-     comments: Comment[];
-     createdAt: string;
-     updatedAt: string;
-     __v: number;
-  author: { _id: string, profileImage:string, userName:string};
+  image: string;
+  description: string;
+  likes: string[];
+  comments: Comment[];
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
+  author: { _id: string; profileImage: string; userName: string };
 }
 
 interface PostCardProps {
   post: Post;
   currentUserId: string;
+  refetchPosts: () => void;
+  refetchUser: () => void;
 }
 
 const PostView: React.FC<PostCardProps> = ({ post, currentUserId }) => {
   const router = useRouter();
-  const {
-    
-    description,
-    image,
-    likes,
-    createdAt,
-    _id,
-    author,
-    comments,
-  } = post;
+  const { description, image, likes, createdAt, _id, author, comments } = post;
 
-  
-  const [isLiked, setIsLiked] = useState<boolean>(false);
+  const [isLiked, setIsLiked] = useState<boolean>(likes.includes(currentUserId));
   const [likeCount, setLikeCount] = useState<number>(likes.length);
   const [newComment, setNewComment] = useState<string>("");
   const [commentsList, setCommentsList] = useState<Comment[]>(comments);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  
+
+  const { mutate: toggleLike } = useLike();
+
+  const handleLikeToggle = () => {
+    toggleLike(
+      { userId: currentUserId, postId: _id },
+      {
+        onSuccess: () => {
+          setIsLiked((prev) => !prev);
+          setLikeCount((prev) => (isLiked ? prev - 1 : prev + 1));
+        },
+        onError: () => {
+          toast.error("Failed to update Like status!");
+        },
+      }
+    );
+  };
+
   const handleProfile = (id: string) => {
-      router.push(`/profile/${id === currentUserId ? currentUserId : id}`);
-    };
-    
-    
-    const formattedTimestamp = formatDistanceToNow(new Date(createdAt), {
-        addSuffix: true,
-    });
-    
-    const toggleModal = () => {
-        setIsModalOpen((prev) => !prev);
-    };
-    
+    router.push(`/profile/${id === currentUserId ? currentUserId : id}`);
+  };
+
+  const formattedTimestamp = formatDistanceToNow(new Date(createdAt), {
+    addSuffix: true,
+  });
+
+  const toggleModal = () => {
+    setIsModalOpen((prev) => !prev);
+  };
+
   return (
     <div className="max-w-2xl ml-40 text-white rounded-lg shadow-lg overflow-hidden mb-6">
       {/* Header Section */}
       <div className="flex items-center justify-between">
-  <div className="flex mb-2 items-center gap-1 cursor-pointer" onClick={() => handleProfile(author?._id)}>
-    {author?.profileImage ? (
-      <img
-     
-       src={author.profileImage} 
-       alt="Profile" 
-       className="w-8 h-8 rounded-full" />
-    ) : (
-      <FaUserCircle className="text-2xl" />
-    )}
-    <p className="text-sm text-gray-400">{author.userName} •</p>
-    <p className="text-sm text-gray-500">{formattedTimestamp}</p>
-  </div>
-  <div>•••</div>
-</div>
-
+        <div className="flex mb-2 items-center gap-1 cursor-pointer" onClick={() => handleProfile(author?._id)}>
+          {author?.profileImage ? (
+            <img src={author.profileImage} alt="Profile" className="w-8 h-8 rounded-full" />
+          ) : (
+            <FaUserCircle className="text-2xl" />
+          )}
+          <p className="text-sm text-gray-400">{author.userName} •</p>
+          <p className="text-sm text-gray-500">{formattedTimestamp}</p>
+        </div>
+        <div>•••</div>
+      </div>
 
       {/* Image Section */}
-      <img
-        alt="Post Image"
-        src={image}
-        className="w-full h-auto object-contain rounded-t-lg"
-      />
+      <img alt="Post Image" src={image} className="w-full h-auto object-contain rounded-t-lg" />
 
       {/* Action Icons */}
       <div className="flex justify-between items-center p-4">
@@ -102,18 +100,15 @@ const PostView: React.FC<PostCardProps> = ({ post, currentUserId }) => {
           {isLiked ? (
             <FaHeart
               className="text-2xl cursor-pointer text-red-500"
-              onClick={() => setIsLiked((prev) => !prev)}
+              onClick={handleLikeToggle}
             />
           ) : (
             <FaRegHeart
               className="text-2xl cursor-pointer hover:text-red-500"
-              onClick={() => setIsLiked((prev) => !prev)}
+              onClick={handleLikeToggle}
             />
           )}
-          <FaRegComment
-            className="text-2xl cursor-pointer hover:text-white"
-            onClick={toggleModal}
-          />
+          <FaRegComment className="text-2xl cursor-pointer hover:text-white" onClick={toggleModal} />
           <FiSend className="text-2xl cursor-pointer hover:text-white" />
         </div>
         <MdBookmarkBorder className="text-2xl cursor-pointer hover:text-white" />
@@ -156,15 +151,6 @@ const PostView: React.FC<PostCardProps> = ({ post, currentUserId }) => {
           Post
         </button>
       </form>
-
-      {/* Comment Modal */}
-      {/* <CommentModal
-        isOpen={isModalOpen}
-        onClose={toggleModal}
-        comments={commentsList}
-        postUserName={userName}
-        profileImage={profileImage}
-      /> */}
     </div>
   );
 };

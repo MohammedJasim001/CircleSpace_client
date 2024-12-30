@@ -2,12 +2,29 @@
 
 import PostView from "@/components/ui/PostView";
 import withMainLayout from "@/components/WithMainLayout";
-import usePosts from "@/hooks/usePosts";
+import { usePosts } from "@/hooks/usePosts";
+import { getUserId } from "@/utils/userId";
+import { useEffect, useState } from "react";
 
 
  function Home() {
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+
   const { data: posts, isLoading, error } = usePosts();
-  const currentUserId = "some-user-id"; 
+
+  useEffect(() => {
+      const fetchCurrentUserId = async () => {
+        try {
+          const userId = await getUserId();
+          setCurrentUserId(userId);
+        } catch (error) {
+          console.error("Error fetching user ID:", error);
+        }
+      };
+  
+      fetchCurrentUserId();
+    }, []);
+  
 
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>Error loading posts: {error.message}</div>;
