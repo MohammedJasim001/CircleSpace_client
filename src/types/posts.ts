@@ -1,10 +1,11 @@
 export interface Comment {
     _id: string;
     author: {
+      _id:string
       userName: string;
       profileImage: string;
     };
-    text: string;
+    content: string;
   }
   interface Author {
     _id: string;

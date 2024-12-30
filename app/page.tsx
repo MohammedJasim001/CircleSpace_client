@@ -1,6 +1,7 @@
 'use client';
 
 import PostView from "@/components/ui/PostView";
+import UserSuggession from "@/components/ui/userSuggestion";
 import withMainLayout from "@/components/WithMainLayout";
 import { usePosts } from "@/hooks/usePosts";
 import { getUserId } from "@/utils/userId";
@@ -35,7 +36,7 @@ import { useEffect, useState } from "react";
       <div className="grid grid-cols-1 gap-6 w-3/4">
         {posts && posts.length > 0 ? (
           posts.map((post, index) => (
-            <PostView key={index} post={post} currentUserId={currentUserId} />
+            <PostView key={index} post={post} currentUserId={currentUserId || ""} />
           ))
         ) : (
           <div>No posts available.</div>
@@ -43,9 +44,9 @@ import { useEffect, useState } from "react";
       </div>
 
       {/* Suggested Users Section */}
-      {/* <div className="w-1/4 mr-20 mt-2">
-        <UserSuggession />
-      </div> */}
+      <div className="w-1/4 mr-20 mt-2">
+        <UserSuggession currentUserId = {currentUserId || ""}/>
+      </div>
     </div>
   );
 }

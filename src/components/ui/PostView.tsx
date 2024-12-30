@@ -1,5 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
-'use client';
+"use client";
 
 import React, { useState } from "react";
 import { FaRegComment, FaRegHeart, FaHeart } from "react-icons/fa6";
@@ -10,10 +10,12 @@ import { FaUserCircle } from "react-icons/fa";
 import { MdBookmarkBorder } from "react-icons/md";
 import { toast } from "react-toastify";
 import useLike from "@/hooks/useLikes";
+import useComment from "@/hooks/useComment";
+import CommentModal from "../modals/CommentModal";
 
 interface Comment {
   _id: string;
-  author: { userName: string; profileImage: string };
+  author: { _id: string; userName: string; profileImage: string };
   content: string;
 }
 
@@ -32,21 +34,22 @@ interface Post {
 interface PostCardProps {
   post: Post;
   currentUserId: string;
-  refetchPosts: () => void;
-  refetchUser: () => void;
 }
 
 const PostView: React.FC<PostCardProps> = ({ post, currentUserId }) => {
   const router = useRouter();
   const { description, image, likes, createdAt, _id, author, comments } = post;
 
-  const [isLiked, setIsLiked] = useState<boolean>(likes.includes(currentUserId));
+  const [isLiked, setIsLiked] = useState<boolean>(
+    likes.includes(currentUserId)
+  );
   const [likeCount, setLikeCount] = useState<number>(likes.length);
-  const [newComment, setNewComment] = useState<string>("");
-  const [commentsList, setCommentsList] = useState<Comment[]>(comments);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [newComment, setNewComment] = useState<string>("");
+  const [commentsList, setCommentsList] = useState<Comment[]>(comments); // Track updated comments
 
   const { mutate: toggleLike } = useLike();
+  const { mutate: addComment } = useComment();
 
   const handleLikeToggle = () => {
     toggleLike(
@@ -64,7 +67,29 @@ const PostView: React.FC<PostCardProps> = ({ post, currentUserId }) => {
   };
 
   const handleProfile = (id: string) => {
-    router.push(`/profile/${id === currentUserId ? currentUserId : id}`);
+    router.push(`/${id}`);
+  };
+
+  const handleCommentSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!newComment.trim()) {
+      toast.error("Comment cannot be empty!");
+      return;
+    }
+
+    addComment(
+      { postId: _id, authorId: currentUserId, content: newComment },
+      {
+        onSuccess: (response: { data: Comment }) => {
+          setCommentsList((prev) => [...prev, response.data]); // Add new comment to the list
+          setNewComment(""); // Clear input field after successful comment
+        },
+        onError: () => {
+          toast.error("Failed to add comment!");
+        },
+      }
+    );
   };
 
   const formattedTimestamp = formatDistanceToNow(new Date(createdAt), {
@@ -79,9 +104,16 @@ const PostView: React.FC<PostCardProps> = ({ post, currentUserId }) => {
     <div className="max-w-2xl ml-40 text-white rounded-lg shadow-lg overflow-hidden mb-6">
       {/* Header Section */}
       <div className="flex items-center justify-between">
-        <div className="flex mb-2 items-center gap-1 cursor-pointer" onClick={() => handleProfile(author?._id)}>
+        <div
+          className="flex mb-2 items-center gap-1 cursor-pointer"
+          onClick={() => handleProfile(author?._id)}
+        >
           {author?.profileImage ? (
-            <img src={author.profileImage} alt="Profile" className="w-8 h-8 rounded-full" />
+            <img
+              src={author.profileImage}
+              alt="Profile"
+              className="w-8 h-8 rounded-full"
+            />
           ) : (
             <FaUserCircle className="text-2xl" />
           )}
@@ -92,7 +124,11 @@ const PostView: React.FC<PostCardProps> = ({ post, currentUserId }) => {
       </div>
 
       {/* Image Section */}
-      <img alt="Post Image" src={image} className="w-full h-auto object-contain rounded-t-lg" />
+      <img
+        alt="Post Image"
+        src={image}
+        className="w-full h-auto object-contain rounded-t-lg"
+      />
 
       {/* Action Icons */}
       <div className="flex justify-between items-center p-4">
@@ -108,7 +144,10 @@ const PostView: React.FC<PostCardProps> = ({ post, currentUserId }) => {
               onClick={handleLikeToggle}
             />
           )}
-          <FaRegComment className="text-2xl cursor-pointer hover:text-white" onClick={toggleModal} />
+          <FaRegComment
+            className="text-2xl cursor-pointer hover:text-white"
+            onClick={toggleModal}
+          />
           <FiSend className="text-2xl cursor-pointer hover:text-white" />
         </div>
         <MdBookmarkBorder className="text-2xl cursor-pointer hover:text-white" />
@@ -123,21 +162,23 @@ const PostView: React.FC<PostCardProps> = ({ post, currentUserId }) => {
         </div>
       </div>
 
-      {/* Comments Section */}
-      <div className="px-4 pb-4">
-        <h3
+      {/* Comment Count */}
+      <div className="px-4 pb-2">
+        <div
           className="text-sm text-gray-400 cursor-pointer"
           onClick={toggleModal}
         >
-          {commentsList.length
-            ? `View all ${commentsList.length} comments`
-            : "No comments yet"}
-        </h3>
+          {comments.length === 0
+            ? "No Comments"
+            : comments.length === 1
+            ? "View 1 Comment"
+            : `View all ${comments.length} Comments`}
+        </div>
       </div>
 
       {/* Add Comment */}
       <form
-        onSubmit={(e) => e.preventDefault()}
+        onSubmit={handleCommentSubmit}
         className="flex items-center gap-2 px-4 pb-2"
       >
         <input
@@ -147,10 +188,18 @@ const PostView: React.FC<PostCardProps> = ({ post, currentUserId }) => {
           onChange={(e) => setNewComment(e.target.value)}
           className="bg-[#1a1c26] text-sm text-white px-3 py-1 w-full rounded"
         />
-        <button type="button" className="text-sm text-blue-500 hover:underline">
+        <button type="submit" className="text-sm text-blue-500 hover:underline">
           Post
         </button>
       </form>
+
+      <CommentModal
+        isOpen={isModalOpen}
+        onClose={toggleModal}
+        comments={commentsList} // Use updated list of comments
+        postUserName={author.userName}
+        profileImage={author.profileImage}
+      />
     </div>
   );
 };

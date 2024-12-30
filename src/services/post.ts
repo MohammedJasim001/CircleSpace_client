@@ -47,3 +47,25 @@ export const likeToggleApi = async (userId:string,postId:string)=>{
     throw error
   }
 }
+
+
+export const addCommentApi = async ( authorId: string,postId: string, content: string)=>{
+  try {
+    const res =await api.post('/user/comment',{authorId,postId,content})
+    console.log(res);
+    return res.data
+  } catch (err) {
+    if (err instanceof AxiosError) {
+      // Return the error message or any other relevant error information
+      return {
+        message: err.response?.data?.message || 'Something went wrong during registration',
+      };
+    } else {
+      // Handle non-Axios errors
+      return {
+        success: false,
+        message: 'An unknown error occurred',
+      };
+    }
+  }
+}
