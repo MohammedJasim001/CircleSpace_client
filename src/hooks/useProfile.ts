@@ -2,7 +2,6 @@ import { profileApi } from "@/services/user";
 import { useQuery } from "@tanstack/react-query";
 
 const useProfile = (userId: string) => {
-    console.log(userId,'alksdfakjsdlkfja');
   return useQuery({
     queryKey: ["profile", userId], 
     queryFn: async () => {

@@ -1,3 +1,4 @@
+
 export const getUserId = async () =>{
     try {
         const user =await JSON.parse(sessionStorage.getItem("user") as string);
@@ -5,5 +6,13 @@ export const getUserId = async () =>{
       return userId
     } catch (error) {
         console.log(error)
+    }
+}
+export const userDetails = async () =>{
+    try {
+        const user = await JSON.parse(sessionStorage.getItem('user') as string)
+        return user
+    } catch (error) {
+        console.log(error);
     }
 }

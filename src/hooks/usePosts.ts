@@ -3,7 +3,7 @@ import { ErrorResponse } from "@/types/common";
 import { CreatePostResponse, GetPostResponse } from "@/types/posts";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { AxiosError } from "axios";
-import { useRouter } from "next/router";
+import { useRouter } from "next/compat/router";
 import { toast } from "react-toastify";
 
 export const usePosts = () => {
@@ -29,7 +29,7 @@ export const useCreatePost = () => {
     },
     onSuccess: (response) => {
       toast.success(response?.message || "Post created successfully!");
-      router.push("/");
+      router?.push("/");
     },
     onError: (error: AxiosError<ErrorResponse>) => {
       const errorMessage =

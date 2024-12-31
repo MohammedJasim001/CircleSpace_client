@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 
 const useUserSuggestion = (userId: string) => {
   return useQuery({
-    queryKey: ["user", userId], 
+    queryKey: ["suggestion", userId], 
     queryFn: async () => {
       if (!userId) {
         throw new Error("userId is required");

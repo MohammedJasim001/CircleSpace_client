@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getUserId } from "@/utils/userId";
+import { getUserId } from "@/utils/userDetails";
 import PostCreate from "@/components/ui/postCreate";
 import withMainLayout from "@/components/WithMainLayout";
 import { useCreatePost } from "@/hooks/usePosts";

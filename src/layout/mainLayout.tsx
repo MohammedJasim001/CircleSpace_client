@@ -11,7 +11,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
   const isAuthPage = authRoutes.includes(pathname);
 
   return (
-    <div className="flex ">
+    <div className=" ">
       {/* Render Sidebar conditionally */}
       {!isAuthPage && <Sidebar />}
       <main className="flex-1 ">{children}</main>

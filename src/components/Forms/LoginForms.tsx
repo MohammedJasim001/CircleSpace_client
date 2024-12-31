@@ -7,6 +7,7 @@ import { toast } from 'react-toastify';
 import { loginApi } from '@/services/auth';
 import Button from '../Button/Button';
 import { useMutation } from '@tanstack/react-query';
+import Link from 'next/link';
 // import GoogleAuth from '@components/googleAuth';
 
 interface LoginFormValues {
@@ -24,6 +25,8 @@ const validationSchema = Yup.object({
 });
 
 const LoginForm: React.FC = () => {
+
+  
   const router = useRouter();
   const initialValues: LoginFormValues = {
     email: '',
@@ -47,7 +50,6 @@ const LoginForm: React.FC = () => {
     }
   })
 
-  // console.log('Current path:', window.location.pathname); // This will log the current path
 
 
   const handleSubmit = async (values: LoginFormValues) => {
@@ -94,6 +96,7 @@ const LoginForm: React.FC = () => {
                   name="password"
                   className="w-full p-2 rounded-md bg-[#1a1c26] text-sm text-gray-400 h-10"
                   placeholder="Enter your password"
+                  
                 />
                 <div className="text-red-500 text-sm mt-1">
                   <ErrorMessage name="password" />
@@ -109,15 +112,15 @@ const LoginForm: React.FC = () => {
             
 
               {/* Optional Link */}
-              <p className="text-center text-sm text-gray-400 mt-4">
+              <div className="text-center text-sm text-gray-400 mt-4">
                 Don't have an account?{' '}
-                <a
+                <Link
                   href="/auth/registration"
                   className="text-blue-500 hover:underline"
                 >
                   Sign up
-                </a>
-              </p>
+                </Link>
+              </div>
             </Form>
           )}
         </Formik>

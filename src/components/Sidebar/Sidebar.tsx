@@ -1,24 +1,51 @@
+/* eslint-disable @next/next/no-img-element */
 "use client"; // Ensure it's a client-side component
 
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation"; // Import usePathname from next/navigation
 import { GoHomeFill } from "react-icons/go";
-import { FaSearch, FaRegBell, FaVideo, FaUserAlt } from "react-icons/fa";
+import { FaSearch, FaRegBell, FaVideo } from "react-icons/fa";
 import { BiMessageDetail,  } from "react-icons/bi";
 import { MdPostAdd } from "react-icons/md";
 import { IoSettings } from "react-icons/io5";
 import Link from "next/link";
+import { getUserId, userDetails } from "@/utils/userDetails";
+
+interface UserProfile {
+  name?: string;
+  email?: string;
+  profileImage?:string;
+  userName?:string
+}
 
 const Sidebar: React.FC = () => {
   const pathname = usePathname(); // Get the current path using usePathname
   const [isClient, setIsClient] = useState(false);
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+  const [userProfile,setUserProfile] = useState<UserProfile |null>({});
+
 
   useEffect(() => {
-    setIsClient(true); // Component mounted on client
+    setIsClient(true); 
   }, []);
 
+   useEffect(() => {
+        const fetchCurrentUserId = async () => {
+          try {
+            const userId = await getUserId();
+            const user = await userDetails()
+            setUserProfile(user)
+            setCurrentUserId(userId);
+          } catch (error) {
+            console.error("Error fetching user ID:", error);
+          }
+        };
+    
+        fetchCurrentUserId();
+      }, []);
+
   if (!isClient) {
-    return null; // Render nothing until client-side
+    return null; 
   }
 
   const isActive = (path: string) => {
@@ -103,13 +130,13 @@ const Sidebar: React.FC = () => {
         </li>
         <li>
           <Link
-            href="/profile"
+            href={`/${currentUserId}`}
             passHref
-            className={`block ${
+            className={`block  ${
               isActive("/profile") ? "text-[#6a3aba]" : "text-[#8F8F8F]"
             }`}
           >
-            <FaUserAlt className="w-6 h-6" />
+            <img src={userProfile?.profileImage} alt={userProfile?.userName} className="w-7 h-7 rounded-full" />
           </Link>
         </li>
 

@@ -12,10 +12,18 @@ export const userSeggetionApi = async (userId:string) =>{
 export const profileApi = async (userId:string) =>{
     try{
         const res = await api.get(`/user/profile/${userId}`)
-        console.log(res.data,'res.dta');
         return res.data
     }
     catch (error){
+        console.error(error)
+    }
+}
+
+export const followApi = async (userId:string,targetId:string) =>{
+    try {
+        const res = await api.post(`/user/follow`,{userId,targetId})
+        return res.data
+    } catch (error) {
         console.error(error)
     }
 }

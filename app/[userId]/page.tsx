@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
-import { getUserId } from "@/utils/userId";
+import { getUserId } from "@/utils/userDetails";
 import ProfilePage from "@/components/ui/ProfilePage";
 import useProfile from "@/hooks/useProfile";
 import withMainLayout from "@/components/WithMainLayout";
@@ -27,7 +27,7 @@ const UserProfilePage = () => {
 
 
   // Fetch user profile using the custom hook
-  const { data: userDetails, isLoading, error } = useProfile(userId);
+  const { data: userDetails, isLoading, error, refetch } = useProfile(userId);
 
   // Handle loading state
   if (isLoading) {
@@ -40,10 +40,11 @@ const UserProfilePage = () => {
   }
 
   return (
-    <ProfilePage
+    <ProfilePage 
       userId={userId}
       userDetails={userDetails.data}
       currentUserId={currentUserId || ""}
+      onRefetch = {refetch}
     />
   );
 };

@@ -4,7 +4,7 @@ import PostView from "@/components/ui/PostView";
 import UserSuggession from "@/components/ui/userSuggestion";
 import withMainLayout from "@/components/WithMainLayout";
 import { usePosts } from "@/hooks/usePosts";
-import { getUserId } from "@/utils/userId";
+import { getUserId } from "@/utils/userDetails";
 import { useEffect, useState } from "react";
 
 

@@ -1,11 +1,11 @@
 /* eslint-disable @next/next/no-img-element */
-// ProfilePage.tsx
-"use client"
+"use client";
 
 import React, { useState } from "react";
-import { FaCoins, FaUser } from "react-icons/fa";
-import Image from "next/image";
 import Button from "../Button/Button";
+import { FaUser } from "react-icons/fa6";
+import useFollow from "@/hooks/useFollow";
+import FollowListModal from "../modals/followModal";
 
 interface User {
   profileImage: string;
@@ -23,37 +23,64 @@ interface ProfileProps {
   userId: string;
   currentUserId: string;
   userDetails: User;
+  onRefetch: () => void;
 }
 
-const ProfilePage: React.FC<ProfileProps> = ({ userId, currentUserId, userDetails }) => {
+const ProfilePage: React.FC<ProfileProps> = ({
+  userId,
+  currentUserId,
+  userDetails,
+  onRefetch,
+}) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalTitle, setModalTitle] = useState("");
-  const [modalData, setModalData] = useState<{ userName: string; _id: string }[]>([]);
-  const [currentFollowingIds, setCurrentFollowingIds] = useState<string[]>([]);
+  const [modalData, setModalData] = useState<User[]>([]);
+  const followMutation = useFollow();
 
-
-  // Set following IDs on component mount
-  React.useEffect(() => {
-    setCurrentFollowingIds(userDetails?.following?.map((ele) => ele._id));
-  }, [userDetails]);
-
-  // Handle follow toggle logic
-  const handleFollowToggle = async (followUserId: string) => {
-    console.log(followUserId);
-    // Implement follow/unfollow logic
+  // Handle Follow/Unfollow
+  const handleFollow = (targetId: string) => {
+    followMutation.mutate(
+      { userId: currentUserId, targetId },
+      {
+        onSuccess: () => {
+          onRefetch();
+        },
+      }
+    );
   };
 
-  console.log(userDetails,'userdetails');
+  const toggleFollow = (userId: string) => {
+    const isFollowing = userDetails.following.some(
+      (user) => user._id === userId
+    );
+    // handleFollow(userId);
+
+    if (isFollowing) {
+      setModalData((prev) =>
+        prev.filter((user) => user._id !== userId)
+      );
+    } else {
+      const followedUser = userDetails.followers.find(
+        (user) => user._id === userId
+      );
+      if (followedUser) setModalData((prev) => [...prev, followedUser]);
+    }
+  };
 
   // Open the modal for followers or following list
   const openModal = (type: "followers" | "following") => {
     setModalTitle(type === "followers" ? "Followers" : "Following");
-    setModalData(type === "followers" ? userDetails?.followers || [] : userDetails?.following || []);
+    setModalData(
+      type === "followers" ? userDetails.followers : userDetails.following
+    );
     setIsModalOpen(true);
   };
 
+  // Close the modal
+  const closeModal = () => setIsModalOpen(false);
+
   return (
-    <div className="text-white ml-44 mt-5 w-[]">
+    <div className="text-white ml-44 py-5 mr-10">
       <div className="relative bg-[#6f30d8] h-40 rounded-lg">
         <div className="absolute left-1/2 transform -translate-x-1/2 top-24">
           {userDetails?.profileImage ? (
@@ -94,23 +121,31 @@ const ProfilePage: React.FC<ProfileProps> = ({ userId, currentUserId, userDetail
           {currentUserId && userId && userId !== currentUserId ? (
             <div className="flex gap-4">
               <Button
-                text={currentFollowingIds.includes(userId) ? "Following" : "Follow"}
-                onClick={() => handleFollowToggle(userId)}
+                text={
+                  userDetails?.followers?.some(
+                    (follower) => String(follower._id) === String(currentUserId) // Ensure both are strings
+                  )
+                    ? "Following"
+                    : "Follow"
+                }
+                onClick={() => handleFollow(userId)}
               />
               <Button text="Message" />
             </div>
           ) : (
             <div className="flex gap-4">
               <Button text="Edit Profile" />
+              <Button text="Edit Profile" />
             </div>
           )}
         </div>
       </div>
 
-
       <div className="mt-10 px-6">
         <div className="flex border-b-2 border-gray-700">
-          <button className="text-white px-4 py-2 border-b-2 border-[#6f30d8]">POSTS</button>
+          <button className="text-white px-4 py-2 border-b-2 border-[#6f30d8]">
+            POSTS
+          </button>
           <button className="text-gray-400 px-4 py-2">SAVED</button>
         </div>
       </div>
@@ -126,6 +161,17 @@ const ProfilePage: React.FC<ProfileProps> = ({ userId, currentUserId, userDetail
           </div>
         ))}
       </div>
+
+      {/* Modal */}
+      <FollowListModal
+        isOpen={isModalOpen}
+        closeModal={closeModal}
+        title={modalTitle}
+        users={modalData}
+        followingIds={userDetails?.following?.map((user) => user._id) || []}
+        currentUserId={currentUserId}
+        onFollowToggle={toggleFollow}
+      />
     </div>
   );
 };
