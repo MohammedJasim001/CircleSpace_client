@@ -21,7 +21,7 @@ interface Comment {
 
 interface Post {
   _id: string;
-  image: string;
+  content: string; // Video or image URL
   description: string;
   likes: string[];
   comments: Comment[];
@@ -36,20 +36,35 @@ interface PostCardProps {
   currentUserId: string;
 }
 
+// Utility functions to check file type
+const isVideo = (url: string) => {
+  const videoExtensions = [".mp4", ".webm", ".ogg", ];
+  return videoExtensions.some((ext) => url.toLowerCase().endsWith(ext));
+};
+
+const isImage = (url: string) => {
+  const imageExtensions = [".jpg", ".jpeg", ".png", ".gif", ".webp"];
+  return imageExtensions.some((ext) => url.toLowerCase().endsWith(ext));
+};
+
 const PostView: React.FC<PostCardProps> = ({ post, currentUserId }) => {
   const router = useRouter();
-  const { description, image, likes, createdAt, _id, author, comments } = post;
+  const { description, content, likes, createdAt, _id, author, comments } = post;
 
-  const [isLiked, setIsLiked] = useState<boolean>(
-    likes.includes(currentUserId)
-  );
+  // Hooks must always be called, even if the post type is invalid
+  const [isLiked, setIsLiked] = useState<boolean>(likes.includes(currentUserId));
   const [likeCount, setLikeCount] = useState<number>(likes.length);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [newComment, setNewComment] = useState<string>("");
-  const [commentsList, setCommentsList] = useState<Comment[]>(comments); // Track updated comments
+  const [commentsList, setCommentsList] = useState<Comment[]>(comments);
 
   const { mutate: toggleLike } = useLike();
   const { mutate: addComment } = useComment();
+
+  // Skip rendering invalid posts
+  if (!isVideo(content) && !isImage(content)) {
+    return null;
+  }
 
   const handleLikeToggle = () => {
     toggleLike(
@@ -82,8 +97,8 @@ const PostView: React.FC<PostCardProps> = ({ post, currentUserId }) => {
       { postId: _id, authorId: currentUserId, content: newComment },
       {
         onSuccess: (response: { data: Comment }) => {
-          setCommentsList((prev) => [...prev, response.data]); // Add new comment to the list
-          setNewComment(""); // Clear input field after successful comment
+          setCommentsList((prev) => [...prev, response.data]);
+          setNewComment("");
         },
         onError: () => {
           toast.error("Failed to add comment!");
@@ -123,12 +138,20 @@ const PostView: React.FC<PostCardProps> = ({ post, currentUserId }) => {
         <div>•••</div>
       </div>
 
-      {/* Image Section */}
-      <img
-        alt="Post Image"
-        src={image}
-        className="w-full h-auto object-contain rounded-t-lg"
-      />
+      {/* Media Section */}
+      {isVideo(content) ? (
+        <video
+          controls
+          src={content}
+          className="w-full h-auto object-contain rounded-t-lg"
+        ></video>
+      ) : (
+        <img
+          src={content}
+          alt="Post Media"
+          className="w-full h-auto object-contain rounded-t-lg"
+        />
+      )}
 
       {/* Action Icons */}
       <div className="flex justify-between items-center p-4">
@@ -196,7 +219,7 @@ const PostView: React.FC<PostCardProps> = ({ post, currentUserId }) => {
       <CommentModal
         isOpen={isModalOpen}
         onClose={toggleModal}
-        comments={commentsList} // Use updated list of comments
+        comments={commentsList}
         postUserName={author.userName}
         profileImage={author.profileImage}
       />

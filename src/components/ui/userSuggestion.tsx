@@ -4,6 +4,7 @@ import { FaUserCircle } from 'react-icons/fa';
 import useUserSuggestion from '@/hooks/useUserSuggestion';
 import useFollow from '@/hooks/useFollow';
 import Button from '../Button/Button';
+import { useRouter } from 'next/navigation';
 
 interface UserSuggessionProps {
   currentUserId: string; // Add currentUserId as a string prop
@@ -20,6 +21,9 @@ const UserSuggession: React.FC<UserSuggessionProps> = ({ currentUserId }) => {
   const { data, isLoading, isError } = useUserSuggestion(currentUserId);
   const followMutation = useFollow();
 
+  const router = useRouter()
+ 
+
 
   const handleFollow = (targetId: string) => {
     followMutation.mutate({ userId: currentUserId, targetId },);
@@ -28,8 +32,7 @@ const UserSuggession: React.FC<UserSuggessionProps> = ({ currentUserId }) => {
 if (isLoading) return <p className="text-white">Loading suggestions...</p>;
 if (isError) return <p className="text-white">Failed to load suggestions.</p>;
 
-const filteredUsers = data?.data || []; // Fallback to empty array if data is null/undefined
-
+const filteredUsers = data?.data || []; // Fallback to empty array if data is null/undefined}
   return (
     <div className="max-w-60 text-white rounded-lg p-4 gap-2">
       <h2 className="text-xl font-semibold mb-4">Suggested for you</h2>
@@ -39,7 +42,7 @@ const filteredUsers = data?.data || []; // Fallback to empty array if data is nu
         ) : (
           filteredUsers?.map((user:User) => (
             <div key={user._id} className="flex justify-between">
-              <div className="rounded-lg flex items-center gap-1 cursor-pointer">
+              <div className="rounded-lg flex items-center gap-1 cursor-pointer" onClick={()=>router.push(`/${user._id}`)}>
                 <div className="w-8 h-8 rounded-full overflow-hidden">
                   {user.profileImage ? (
                     <img

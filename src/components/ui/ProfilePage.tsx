@@ -13,8 +13,8 @@ interface User {
   userName: string;
   bio: string;
   posts: { image: string }[];
-  followers: { userName: string; _id: string }[];
-  following: { userName: string; _id: string }[];
+  followers: { userName: string; _id: string; profileImage: string; followers: { _id: string }[]}[] ;
+  following: { userName: string; _id: string; profileImage: string;followers: { _id: string }[] }[];
   coins: number;
   _id: string;
 }
@@ -26,6 +26,13 @@ interface ProfileProps {
   onRefetch: () => void;
 }
 
+interface UserSummary {
+  userName: string;
+  _id: string;
+  profileImage: string;
+  followers: { _id: string }[]
+}
+
 const ProfilePage: React.FC<ProfileProps> = ({
   userId,
   currentUserId,
@@ -34,7 +41,7 @@ const ProfilePage: React.FC<ProfileProps> = ({
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalTitle, setModalTitle] = useState("");
-  const [modalData, setModalData] = useState<User[]>([]);
+  const [modalData, setModalData] = useState<UserSummary[]>([]);
   const followMutation = useFollow();
 
   // Handle Follow/Unfollow
@@ -47,24 +54,6 @@ const ProfilePage: React.FC<ProfileProps> = ({
         },
       }
     );
-  };
-
-  const toggleFollow = (userId: string) => {
-    const isFollowing = userDetails.following.some(
-      (user) => user._id === userId
-    );
-    // handleFollow(userId);
-
-    if (isFollowing) {
-      setModalData((prev) =>
-        prev.filter((user) => user._id !== userId)
-      );
-    } else {
-      const followedUser = userDetails.followers.find(
-        (user) => user._id === userId
-      );
-      if (followedUser) setModalData((prev) => [...prev, followedUser]);
-    }
   };
 
   // Open the modal for followers or following list
@@ -80,7 +69,7 @@ const ProfilePage: React.FC<ProfileProps> = ({
   const closeModal = () => setIsModalOpen(false);
 
   return (
-    <div className="text-white ml-44 py-5 mr-10">
+    <div className="text-white ml-44 py-5 mr-10 pt-28">
       <div className="relative bg-[#6f30d8] h-40 rounded-lg">
         <div className="absolute left-1/2 transform -translate-x-1/2 top-24">
           {userDetails?.profileImage ? (
@@ -130,11 +119,11 @@ const ProfilePage: React.FC<ProfileProps> = ({
                 }
                 onClick={() => handleFollow(userId)}
               />
+
               <Button text="Message" />
             </div>
           ) : (
             <div className="flex gap-4">
-              <Button text="Edit Profile" />
               <Button text="Edit Profile" />
             </div>
           )}
@@ -167,10 +156,9 @@ const ProfilePage: React.FC<ProfileProps> = ({
         isOpen={isModalOpen}
         closeModal={closeModal}
         title={modalTitle}
-        users={modalData}
-        followingIds={userDetails?.following?.map((user) => user._id) || []}
+        users={modalData} // Pass only the user details without follow/unfollow logic
         currentUserId={currentUserId}
-        onFollowToggle={toggleFollow}
+        handleFollow={handleFollow} 
       />
     </div>
   );

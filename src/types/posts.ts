@@ -38,7 +38,7 @@ export interface Comment {
   export interface GetPostResponse {
     _id: string;
     author: Author;
-    image: string;
+    content: string;
     description: string;
     likes: string[];
     comments: Comment[];

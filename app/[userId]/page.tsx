@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { getUserId } from "@/utils/userDetails";
 import ProfilePage from "@/components/ui/ProfilePage";
 import useProfile from "@/hooks/useProfile";
-import withMainLayout from "@/components/WithMainLayout";
+import MainLayout from "@/layout/mainLayout";
 
 const UserProfilePage = () => {
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
@@ -40,13 +40,15 @@ const UserProfilePage = () => {
   }
 
   return (
+    <MainLayout>
     <ProfilePage 
       userId={userId}
       userDetails={userDetails.data}
       currentUserId={currentUserId || ""}
       onRefetch = {refetch}
     />
+    </MainLayout>
   );
 };
 
-export default withMainLayout(UserProfilePage);
+export default UserProfilePage

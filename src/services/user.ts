@@ -27,3 +27,12 @@ export const followApi = async (userId:string,targetId:string) =>{
         console.error(error)
     }
 }
+
+export const searchUserApi = async (query:string)=>{
+    try {
+        const res = await api.get(`/user/search?query=${query}`)
+        return res.data
+    } catch (error) {
+        console.log(error)
+    }
+    }

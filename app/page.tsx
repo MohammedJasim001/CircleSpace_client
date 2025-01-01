@@ -2,8 +2,9 @@
 
 import PostView from "@/components/ui/PostView";
 import UserSuggession from "@/components/ui/userSuggestion";
-import withMainLayout from "@/components/WithMainLayout";
+// import withMainLayout from "@/components/WithMainLayout";
 import { usePosts } from "@/hooks/usePosts";
+import MainLayout from "@/layout/mainLayout";
 import { getUserId } from "@/utils/userDetails";
 import { useEffect, useState } from "react";
 
@@ -31,7 +32,8 @@ import { useEffect, useState } from "react";
   if (error) return <div>Error loading posts: {error.message}</div>;
 
   return (
-    <div className="flex gap-6 p-4 ml-44">
+    <MainLayout>
+    <div className="flex gap-6 p-4 ml-44 pt-28">
       {/* Posts Section */}
       <div className="grid grid-cols-1 gap-6 w-3/4">
         {posts && posts.length > 0 ? (
@@ -44,11 +46,12 @@ import { useEffect, useState } from "react";
       </div>
 
       {/* Suggested Users Section */}
-      <div className="w-1/4 mr-20 mt-2">
+      <div className="w-1/4 mr-20 mt-2 hidden lg:block">
         <UserSuggession currentUserId = {currentUserId || ""}/>
       </div>
     </div>
+    </MainLayout>
   );
 }
 
-export default withMainLayout(Home);
+export default Home

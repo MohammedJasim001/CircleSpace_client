@@ -69,3 +69,13 @@ export const addCommentApi = async ( authorId: string,postId: string, content: s
     }
   }
 }
+
+
+export const getVideoApi = async()=>{
+  try {
+    const res = await api.get('/user/videos')
+    return res.data
+  } catch (error) {
+    console.error(error)
+  }
+}

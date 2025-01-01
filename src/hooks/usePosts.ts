@@ -1,9 +1,10 @@
+
 import { createPostApi, getPostsApi } from "@/services/post";
 import { ErrorResponse } from "@/types/common";
 import { CreatePostResponse, GetPostResponse } from "@/types/posts";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { AxiosError } from "axios";
-import { useRouter } from "next/compat/router";
+import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 
 export const usePosts = () => {
@@ -17,7 +18,7 @@ export const usePosts = () => {
 export const useCreatePost = () => {
   const router = useRouter();
 
-  const { mutate, isPending } = useMutation<
+  return useMutation<
     CreatePostResponse,
     AxiosError<ErrorResponse>,
     { userId: string; formData: FormData }
@@ -28,8 +29,8 @@ export const useCreatePost = () => {
       return response;
     },
     onSuccess: (response) => {
-      toast.success(response?.message || "Post created successfully!");
       router?.push("/");
+      toast.success(response?.message || "Post created successfully!");
     },
     onError: (error: AxiosError<ErrorResponse>) => {
       const errorMessage =
@@ -38,7 +39,6 @@ export const useCreatePost = () => {
     },
   });
 
-  return { mutate, isPending };
 };
 
 
