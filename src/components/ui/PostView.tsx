@@ -116,7 +116,7 @@ const PostView: React.FC<PostCardProps> = ({ post, currentUserId }) => {
   };
 
   return (
-    <div className="max-w-2xl ml-40 text-white rounded-lg shadow-lg overflow-hidden mb-6">
+    <div className="max-w-md ml-60 text-white rounded-lg shadow-lg overflow-hidden mb-6">
       {/* Header Section */}
       <div className="flex items-center justify-between">
         <div
@@ -143,7 +143,7 @@ const PostView: React.FC<PostCardProps> = ({ post, currentUserId }) => {
         <video
           controls
           src={content}
-          className="w-full h-auto object-contain rounded-t-lg"
+          className="w-full h-auto max-h-[500px] object-contain rounded-t-lg"
         ></video>
       ) : (
         <img
