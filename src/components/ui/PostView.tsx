@@ -7,11 +7,12 @@ import { FiSend } from "react-icons/fi";
 import { formatDistanceToNow } from "date-fns";
 import { useRouter } from "next/navigation";
 import { FaUserCircle } from "react-icons/fa";
-import { MdBookmarkBorder } from "react-icons/md";
+import { MdBookmarkBorder, MdBookmark } from "react-icons/md";
 import { toast } from "react-toastify";
 import useLike from "@/hooks/useLikes";
 import useComment from "@/hooks/useComment";
 import CommentModal from "../modals/CommentModal";
+import useSave from "@/hooks/useSave";
 
 interface Comment {
   _id: string;
@@ -38,7 +39,7 @@ interface PostCardProps {
 
 // Utility functions to check file type
 const isVideo = (url: string) => {
-  const videoExtensions = [".mp4", ".webm", ".ogg", ];
+  const videoExtensions = [".mp4", ".webm", ".ogg"];
   return videoExtensions.some((ext) => url.toLowerCase().endsWith(ext));
 };
 
@@ -58,8 +59,11 @@ const PostView: React.FC<PostCardProps> = ({ post, currentUserId }) => {
   const [newComment, setNewComment] = useState<string>("");
   const [commentsList, setCommentsList] = useState<Comment[]>(comments);
 
+  // Save state
+  const [isSaved, setIsSaved] = useState<boolean>(false); // Track if the post is saved
   const { mutate: toggleLike } = useLike();
   const { mutate: addComment } = useComment();
+  const { mutate: savePost } = useSave();
 
   // Skip rendering invalid posts
   if (!isVideo(content) && !isImage(content)) {
@@ -73,9 +77,6 @@ const PostView: React.FC<PostCardProps> = ({ post, currentUserId }) => {
         onSuccess: () => {
           setIsLiked((prev) => !prev);
           setLikeCount((prev) => (isLiked ? prev - 1 : prev + 1));
-        },
-        onError: () => {
-          toast.error("Failed to update Like status!");
         },
       }
     );
@@ -100,9 +101,19 @@ const PostView: React.FC<PostCardProps> = ({ post, currentUserId }) => {
           setCommentsList((prev) => [...prev, response.data]);
           setNewComment("");
         },
-        onError: () => {
-          toast.error("Failed to add comment!");
+
+      }
+    );
+  };
+
+  const handleSaveToggle = () => {
+    savePost(
+      { userId: currentUserId, postId: _id },
+      {
+        onSuccess: () => {
+          setIsSaved((prev) => !prev);
         },
+
       }
     );
   };
@@ -173,7 +184,17 @@ const PostView: React.FC<PostCardProps> = ({ post, currentUserId }) => {
           />
           <FiSend className="text-2xl cursor-pointer hover:text-white" />
         </div>
-        <MdBookmarkBorder className="text-2xl cursor-pointer hover:text-white" />
+        {isSaved ? (
+          <MdBookmark
+            className="text-2xl cursor-pointer hover:text-white"
+            onClick={handleSaveToggle}
+          />
+        ) : (
+          <MdBookmarkBorder
+            className="text-2xl cursor-pointer hover:text-white"
+            onClick={handleSaveToggle}
+          />
+        )}
       </div>
 
       {/* Like & Description */}

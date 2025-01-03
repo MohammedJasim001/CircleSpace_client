@@ -3,7 +3,13 @@
 import React, { useState, useRef } from "react";
 import useReels from "@/hooks/useReels";
 import MainLayout from "@/layout/mainLayout";
-import { FaHeart, FaRegHeart, FaComment, FaPaperPlane, FaSave } from "react-icons/fa";
+import {
+  FaHeart,
+  FaRegHeart,
+  FaComment,
+  FaPaperPlane,
+  FaSave,
+} from "react-icons/fa";
 
 interface Comment {
   _id: string;
@@ -42,7 +48,7 @@ const VideoPosts = () => {
   };
 
   const toggleMute = () => {
-    console.log('objectvd');
+    console.log("objectvd");
     setMuted((prevMuted) => {
       const newMuted = !prevMuted;
       Object.values(videoRefs.current).forEach((videoElement) => {
@@ -115,10 +121,10 @@ const VideoPosts = () => {
 
                   {/* Mute/Unmute Button */}
                   <div
-                    className="absolute bottom-4 right-4 bg-gray-800 p-2 rounded-full text-white cursor-pointer "
+                    className="absolute bottom-8 right-4 bg-gray-800 p-4 rounded-full text-white cursor-pointer flex items-center justify-center w-12 h-12"
                     onClick={toggleMute}
                   >
-                    {muted ? "🔇" : "🔊"}
+                    <span className="text-xl">{muted ? "🔇" : "🔊"}</span>
                   </div>
                 </div>
 
@@ -140,7 +146,9 @@ const VideoPosts = () => {
                   {/* Comment Button */}
                   <button className="text-white text-xl flex flex-col items-center">
                     <FaComment />
-                    <span className="block text-xs">{post.comments.length}</span>
+                    <span className="block text-xs">
+                      {post.comments.length}
+                    </span>
                   </button>
 
                   {/* Save Button */}

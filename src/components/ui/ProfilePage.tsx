@@ -12,10 +12,19 @@ interface User {
   name: string;
   userName: string;
   bio: string;
-  posts: { image: string }[];
-  followers: { userName: string; _id: string; profileImage: string; followers: { _id: string }[]}[] ;
-  following: { userName: string; _id: string; profileImage: string;followers: { _id: string }[] }[];
-  coins: number;
+  posts: { content: string }[];
+  followers: {
+    userName: string;
+    _id: string;
+    profileImage: string;
+    followers: { _id: string }[];
+  }[];
+  following: {
+    userName: string;
+    _id: string;
+    profileImage: string;
+    followers: { _id: string }[];
+  }[];
   _id: string;
 }
 
@@ -30,7 +39,7 @@ interface UserSummary {
   userName: string;
   _id: string;
   profileImage: string;
-  followers: { _id: string }[]
+  followers: { _id: string }[];
 }
 
 const ProfilePage: React.FC<ProfileProps> = ({
@@ -89,19 +98,27 @@ const ProfilePage: React.FC<ProfileProps> = ({
       <div className="mt-20 text-center">
         <h1 className="text-2xl font-bold">{userDetails?.name}</h1>
         <p className="text-gray-400">@{userDetails?.userName}</p>
-        <p className="text-gray-300 max-w-lg mx-auto mt-2">{userDetails?.bio}</p>
+        <p className="text-gray-300 max-w-lg mx-auto mt-2">
+          {userDetails?.bio}
+        </p>
 
         <div className="flex justify-center gap-8 mt-6">
           <div>
-            <p className="text-lg font-semibold">{userDetails?.posts?.length}</p>
+            <p className="text-lg font-semibold">
+              {userDetails?.posts?.length}
+            </p>
             <p className="text-gray-400">Posts</p>
           </div>
           <div onClick={() => openModal("followers")}>
-            <p className="text-lg font-semibold">{userDetails?.followers?.length}</p>
+            <p className="text-lg font-semibold">
+              {userDetails?.followers?.length}
+            </p>
             <p className="text-gray-400">Followers</p>
           </div>
           <div onClick={() => openModal("following")}>
-            <p className="text-lg font-semibold">{userDetails?.following?.length}</p>
+            <p className="text-lg font-semibold">
+              {userDetails?.following?.length}
+            </p>
             <p className="text-gray-400">Following</p>
           </div>
         </div>
@@ -135,18 +152,32 @@ const ProfilePage: React.FC<ProfileProps> = ({
           <button className="text-white px-4 py-2 border-b-2 border-[#6f30d8]">
             POSTS
           </button>
-          <button className="text-gray-400 px-4 py-2">SAVED</button>
+          <button className="text-gray-400 px-4 py-2">
+            SAVED
+            </button>
         </div>
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-3 gap-4 px-6 mt-6">
         {userDetails?.posts?.map((post, index) => (
           <div key={index} className="rounded-lg overflow-hidden">
-            <img
-              src={post.image}
-              alt={`Post ${index + 1}`}
-              className="w-full h-48 object-cover"
-            />
+            {post.content?.includes("mp4") ||
+            post.content?.includes("youtube") ? (
+              <video
+                controls
+                className="w-full h-48 object-cover"
+                src={post.content}
+                // alt={`Post ${index + 1}`}
+              >
+                Your browser does not support the video tag.
+              </video>
+            ) : (
+              <img
+                src={post.content}
+                alt={`Post ${index + 1}`}
+                className="w-full h-48 object-cover"
+              />
+            )}
           </div>
         ))}
       </div>
@@ -158,7 +189,7 @@ const ProfilePage: React.FC<ProfileProps> = ({
         title={modalTitle}
         users={modalData} // Pass only the user details without follow/unfollow logic
         currentUserId={currentUserId}
-        handleFollow={handleFollow} 
+        handleFollow={handleFollow}
       />
     </div>
   );

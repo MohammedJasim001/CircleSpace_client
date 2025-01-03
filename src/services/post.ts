@@ -79,3 +79,12 @@ export const getVideoApi = async()=>{
     console.error(error)
   }
 }
+
+export const savePostApi = async (userId:string,postId:string) =>{
+  try {
+    const res = await api.post ('user/posts/save',{userId,postId})
+    return res.data
+  } catch (error) {
+    console.error(error)
+  }
+}

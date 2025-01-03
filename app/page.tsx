@@ -35,7 +35,7 @@ import { useEffect, useState } from "react";
     <MainLayout>
     <div className="flex gap-6 p-4 ml-44 pt-28">
       {/* Posts Section */}
-      <div className="grid grid-cols-1 gap-6 w-3/4">
+      <div className="grid grid-cols-1 gap-6 max-w-2xl ">
         {posts && posts.length > 0 ? (
           posts.map((post, index) => (
             <PostView key={index} post={post} currentUserId={currentUserId || ""} />
