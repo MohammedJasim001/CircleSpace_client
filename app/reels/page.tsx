@@ -1,15 +1,13 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import useReels from "@/hooks/useReels";
+import useLike from "@/hooks/useLikes";
 import MainLayout from "@/layout/mainLayout";
-import {
-  FaHeart,
-  FaRegHeart,
-  FaComment,
-  FaPaperPlane,
-  FaSave,
-} from "react-icons/fa";
+import { getUserId } from "@/utils/userDetails";
+import { FaHeart, FaRegHeart, FaComment, FaPaperPlane, FaSave } from "react-icons/fa";
+import CommentModal from "@/components/modals/CommentModal";
 
 interface Comment {
   _id: string;
@@ -19,36 +17,87 @@ interface Comment {
 
 interface Post {
   _id: string;
-  content: string; // Video or image URL
+  content: string;
   description: string;
-  likes: string[]; // Array of user IDs who liked the post
+  likes: string[];  // Array of user IDs who liked the post
   comments: Comment[];
   createdAt: string;
   updatedAt: string;
   __v: number;
-  author: { _id: string; profileImage: string; userName: string }; // User info for the post author
+  author: { _id: string; profileImage: string; userName: string };
 }
 
 const VideoPosts = () => {
   const { data: videoPosts, isLoading, isError, error } = useReels();
-  const [likes, setLikes] = useState<{ [key: string]: boolean }>({});
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+  const [likeCounts, setLikeCounts] = useState<{ [key: string]: number }>({});
+  const [isLiked, setIsLiked] = useState<{ [key: string]: boolean }>({});
   const [muted, setMuted] = useState<boolean>(true);
   const [isPlaying, setIsPlaying] = useState<{ [key: string]: boolean }>({});
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [selectedPost, setSelectedPost] = useState<Post | null>(null);
+
+  const { mutate: toggleLike } = useLike();
+
+  useEffect(() => {
+    const fetchCurrentUserId = async () => {
+      try {
+        const userId = await getUserId();
+        setCurrentUserId(userId);
+      } catch (error) {
+        console.error("Error fetching user ID:", error);
+      }
+    };
+
+    fetchCurrentUserId();
+  }, []);
 
   const videoRefs = useRef<{ [key: string]: HTMLVideoElement }>({});
+
+  useEffect(() => {
+    if (videoPosts && currentUserId) {
+      const initialLikeState: { [key: string]: boolean } = {};
+      const initialLikeCounts: { [key: string]: number } = {};
+
+      videoPosts.forEach((post:Post) => {
+        const userHasLiked = post.likes.includes(currentUserId);
+        initialLikeState[post._id] = userHasLiked;
+        initialLikeCounts[post._id] = post.likes.length;
+      });
+
+      setIsLiked(initialLikeState);
+      setLikeCounts(initialLikeCounts);
+    }
+  }, [videoPosts, currentUserId]);
 
   if (isLoading) return <div>Loading...</div>;
   if (isError) return <div>Error: {error?.message}</div>;
 
-  const handleLike = (postId: string) => {
-    setLikes((prevLikes) => ({
-      ...prevLikes,
-      [postId]: !prevLikes[postId],
-    }));
+  // Handle like toggle
+  const handleLikeToggle = (postId: string) => {
+    toggleLike(
+      { userId: currentUserId || "", postId: postId },
+      {
+        onSuccess: () => {
+          const updatedLikeState = { ...isLiked };
+          const updatedLikeCounts = { ...likeCounts };
+
+          updatedLikeState[postId] = !updatedLikeState[postId];
+
+          if (updatedLikeState[postId]) {
+            updatedLikeCounts[postId] += 1;
+          } else {
+            updatedLikeCounts[postId] -= 1;
+          }
+
+          setIsLiked(updatedLikeState);
+          setLikeCounts(updatedLikeCounts);
+        },
+      }
+    );
   };
 
   const toggleMute = () => {
-    console.log("objectvd");
     setMuted((prevMuted) => {
       const newMuted = !prevMuted;
       Object.values(videoRefs.current).forEach((videoElement) => {
@@ -90,20 +139,29 @@ const VideoPosts = () => {
     }
   };
 
+  const openModal = (post: Post) => {
+    setSelectedPost(post);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setSelectedPost(null);
+    setIsModalOpen(false);
+  };
+
   return (
     <div>
       <MainLayout>
-        <div className="flex flex-wrap justify-center gap-4 min-h-screen pt-28 flex-col">
+        <div className="flex flex-wrap justify-center gap-4 min-h-screen pt-28 flex-col mr-44">
           {videoPosts && videoPosts.length === 0 ? (
             <p className="text-white">No video posts available</p>
           ) : (
             videoPosts.map((post: Post) => (
               <div
                 key={post._id}
-                className="relative h-[600px] w-[300px] overflow-hidden mb-8 mx-auto bg-black rounded-lg "
+                className="relative h-[550px] w-[300px] overflow-hidden mb-8 mx-auto bg-black rounded-lg"
               >
-                {/* Video Section */}
-                <div className="video-container relative flex items-center justify-center h-[550px] w-full ">
+                <div className="video-container relative flex items-center justify-center h-[500px] w-full">
                   <video
                     ref={(el) => {
                       if (el) {
@@ -119,7 +177,6 @@ const VideoPosts = () => {
                     Your browser does not support the video tag.
                   </video>
 
-                  {/* Mute/Unmute Button */}
                   <div
                     className="absolute bottom-8 right-4 bg-gray-800 p-4 rounded-full text-white cursor-pointer flex items-center justify-center w-12 h-12"
                     onClick={toggleMute}
@@ -128,38 +185,36 @@ const VideoPosts = () => {
                   </div>
                 </div>
 
-                {/* Interaction Buttons */}
                 <div className="absolute right-4 top-1/2 transform -translate-y-1/2 flex flex-col items-center space-y-6">
-                  {/* Like Button */}
+                  <div>
+                    {isLiked[post._id] ? (
+                      <FaHeart
+                        className="text-2xl cursor-pointer text-red-500"
+                        onClick={() => handleLikeToggle(post._id)}
+                      />
+                    ) : (
+                      <FaRegHeart
+                        className="text-2xl cursor-pointer hover:text-red-500"
+                        onClick={() => handleLikeToggle(post._id)}
+                      />
+                    )}
+                    <span className="block text-xs text-center">
+                      {likeCounts[post._id]}
+                    </span>
+                  </div>
                   <button
                     className="text-white text-xl flex flex-col items-center"
-                    onClick={() => handleLike(post._id)}
+                    onClick={() => openModal(post)}
                   >
-                    {likes[post._id] ? (
-                      <FaHeart className="text-red-500" />
-                    ) : (
-                      <FaRegHeart />
-                    )}
-                    <span className="block text-xs">{post.likes.length}</span>
-                  </button>
-
-                  {/* Comment Button */}
-                  <button className="text-white text-xl flex flex-col items-center">
                     <FaComment />
-                    <span className="block text-xs">
-                      {post.comments.length}
-                    </span>
+                    <span className="block text-xs">{post.comments.length}</span>
                   </button>
-
-                  {/* Save Button */}
                   <button
                     className="text-white text-xl"
                     onClick={() => handleSave(post._id)}
                   >
                     <FaSave />
                   </button>
-
-                  {/* Share Button */}
                   <button
                     className="text-white text-xl"
                     onClick={() => handleShare(post._id)}
@@ -168,7 +223,6 @@ const VideoPosts = () => {
                   </button>
                 </div>
 
-                {/* Video Description and User Details at Bottom */}
                 <div className="absolute bottom-0 left-0 w-full p-4 bg-gradient-to-t from-black to-transparent text-white">
                   <div className="flex items-center space-x-2">
                     <img
@@ -186,11 +240,21 @@ const VideoPosts = () => {
             ))
           )}
         </div>
+
+        {selectedPost && (
+          <CommentModal
+            isOpen={isModalOpen}
+            onClose={closeModal}
+            comments={selectedPost.comments}
+            postUserName={selectedPost.author.userName}
+            profileImage={selectedPost.author.profileImage}
+            postId={selectedPost._id}
+            currentUserId={currentUserId || ""}
+          />
+        )}
       </MainLayout>
     </div>
   );
 };
 
-export default React.memo(() => {
-  return <VideoPosts />;
-});
+export default React.memo(VideoPosts);

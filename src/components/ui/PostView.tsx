@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FaRegComment, FaRegHeart, FaHeart } from "react-icons/fa6";
 import { FiSend } from "react-icons/fi";
 import { formatDistanceToNow } from "date-fns";
@@ -59,13 +59,20 @@ const PostView: React.FC<PostCardProps> = ({ post, currentUserId }) => {
   const [newComment, setNewComment] = useState<string>("");
   const [commentsList, setCommentsList] = useState<Comment[]>(comments);
 
-  // Save state
-  const [isSaved, setIsSaved] = useState<boolean>(false); // Track if the post is saved
+  // Check if the post is saved in localStorage
+  const [isSaved, setIsSaved] = useState<boolean>(() => {
+    return localStorage.getItem(`savedPost_${_id}`) === "true"; // Check if it's saved
+  });
+
   const { mutate: toggleLike } = useLike();
-  const { mutate: addComment } = useComment();
+  const { mutate: addComment } = useComment(_id);
   const { mutate: savePost } = useSave();
 
-  // Skip rendering invalid posts
+  useEffect(() => {
+    // Save the saved state to localStorage whenever it changes
+    localStorage.setItem(`savedPost_${_id}`, JSON.stringify(isSaved));
+  }, [isSaved, _id]);
+
   if (!isVideo(content) && !isImage(content)) {
     return null;
   }
@@ -101,7 +108,6 @@ const PostView: React.FC<PostCardProps> = ({ post, currentUserId }) => {
           setCommentsList((prev) => [...prev, response.data]);
           setNewComment("");
         },
-
       }
     );
   };
@@ -111,9 +117,8 @@ const PostView: React.FC<PostCardProps> = ({ post, currentUserId }) => {
       { userId: currentUserId, postId: _id },
       {
         onSuccess: () => {
-          setIsSaved((prev) => !prev);
+          setIsSaved((prev) => !prev); // Toggle the saved state
         },
-
       }
     );
   };
@@ -212,11 +217,11 @@ const PostView: React.FC<PostCardProps> = ({ post, currentUserId }) => {
           className="text-sm text-gray-400 cursor-pointer"
           onClick={toggleModal}
         >
-          {comments.length === 0
+          {commentsList.length === 0
             ? "No Comments"
-            : comments.length === 1
+            : commentsList.length === 1
             ? "View 1 Comment"
-            : `View all ${comments.length} Comments`}
+            : `View all ${commentsList.length} Comments`}
         </div>
       </div>
 
@@ -243,6 +248,8 @@ const PostView: React.FC<PostCardProps> = ({ post, currentUserId }) => {
         comments={commentsList}
         postUserName={author.userName}
         profileImage={author.profileImage}
+        postId={_id}
+        currentUserId={currentUserId}
       />
     </div>
   );

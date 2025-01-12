@@ -52,7 +52,7 @@ export const likeToggleApi = async (userId:string,postId:string)=>{
 export const addCommentApi = async ( authorId: string,postId: string, content: string)=>{
   try {
     const res =await api.post('/user/comment',{authorId,postId,content})
-    console.log(res);
+    console.log(res.data,'sdklfjs');
     return res.data
   } catch (err) {
     if (err instanceof AxiosError) {

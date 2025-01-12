@@ -1,10 +1,10 @@
-/* eslint-disable @next/next/no-img-element */
-// components/CommentModal.tsx
-import React from "react";
+import useComment from "@/hooks/useComment";
+import React, { useState, useEffect } from "react";
 import { FaUserCircle } from "react-icons/fa";
+import { toast } from "react-toastify";
 
 interface Comment {
-    _id:string
+  _id: string;
   author: { _id: string; userName: string; profileImage: string };
   content: string;
 }
@@ -15,6 +15,8 @@ interface CommentModalProps {
   comments: Comment[];
   postUserName: string;
   profileImage: string;
+  postId: string;
+  currentUserId: string;
 }
 
 const CommentModal: React.FC<CommentModalProps> = ({
@@ -23,70 +25,124 @@ const CommentModal: React.FC<CommentModalProps> = ({
   comments,
   postUserName,
   profileImage,
+  postId,
+  currentUserId,
 }) => {
+  const [newComment, setNewComment] = useState("");
+  const [commentsList, setCommentsList] = useState<Comment[]>(comments);
+  const { mutate: addComment } = useComment(postId);
+
+  // Update the local comments list when the comments prop changes
+  useEffect(() => {
+    setCommentsList(comments);
+  }, [comments]);
+
   if (!isOpen) return null;
+
+  const handleCommentSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!newComment.trim()) {
+      toast.error("Comment cannot be empty!");
+      return;
+    }
+
+    // Optimistic UI Update
+    const optimisticComment: Comment = {
+      _id: "temp-id", // Temporary ID for optimistic update
+      author: {
+        _id: currentUserId,
+        userName: "You",
+        profileImage: "", // Placeholder, if user has a profile image, set it here
+      },
+      content: newComment,
+    };
+
+    setCommentsList((prevComments) => [...prevComments, optimisticComment]);
+
+    addComment(
+      { postId: postId, authorId: currentUserId, content: newComment },
+      {
+        onSuccess: (response: { data: Comment }) => {
+          // Replace optimistic comment with the real one after successful API response
+          setCommentsList((prev) =>
+            prev.map((comment) =>
+              comment._id === "temp-id" ? response.data : comment
+            )
+          );
+          setNewComment(""); // Clear input
+        },
+      }
+    );
+  };
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-      <div className="bg-gray-800 p-6 rounded-lg w-[40%] h-[60%] max-h-[80vh] overflow-y-auto relative ">
-        <div className="">
-          <div className="w-2/3">
-            <div className="flex justify-between items-center mb-4">
-              <div className="flex items-center gap-2">
-                {profileImage ? (
-                  <img
-                    src={profileImage}
-                    alt={postUserName}
-                    className="w-8 h-8 rounded-full object-cover"
-                  />
-                ) : (
-                  <FaUserCircle className="text-gray-400 text-3xl" /> // User icon if no profile image
-                )}
-                <p className="text-sm text-gray-300">{postUserName}</p>
-              </div>
+      <div className="bg-gray-800 p-6 rounded-lg w-[40%] h-[60%] max-h-[80vh] relative flex flex-col">
+        {/* Close Button */}
+        <button
+          onClick={onClose}
+          className="absolute top-2 right-2 text-white text-2xl"
+        >
+          X
+        </button>
 
-              <div>•••</div>
-            </div>
-
-            <hr />
-
-            <div className="flex flex-col">
-              <div className="space-y-4 mt-5">
-                {comments.map((comment, index) => (
-                  <div key={index} className="mb-2 gap-2">
-                    {/* Conditionally render profile image or user icon */}
-                    <div className="flex items-center gap-2">
-                      {comment?.author?.profileImage ? (
-                        <img
-                          src={comment?.author?.profileImage}
-                          alt={comment?.author?.userName}
-                          className="w-8 h-8 rounded-full object-cover"
-                        />
-                      ) : (
-                        <FaUserCircle className="text-gray-400 text-3xl" /> // User icon if no profile image
-                      )}
-                      <p className="text-sm text-gray-300">
-                        {comment?.author?.userName}
-                      </p>
-                      <p className="text-sm text-gray-400">
-                        {comment?.content}
-                      </p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-              
-            </div>
-          </div>
-          <div className="w-1/3">
-            <button
-              onClick={onClose}
-              className="absolute top-0 right-2 text-white text-2xl "
-            >
-              X
-            </button>
-          </div>
+        {/* Post User Details */}
+        <div className="flex items-center gap-2 mb-4">
+          {profileImage ? (
+            <img
+              src={profileImage}
+              alt={postUserName}
+              className="w-8 h-8 rounded-full object-cover"
+            />
+          ) : (
+            <FaUserCircle className="text-gray-400 text-3xl" />
+          )}
+          <p className="text-sm text-gray-300">{postUserName}</p>
         </div>
+
+        <hr />
+
+        {/* Comments List */}
+        <div className="flex-1 overflow-y-auto mt-4 space-y-4">
+          {commentsList.map((comment) => (
+            <div key={comment._id} className="flex items-center gap-2">
+              {comment.author.profileImage ? (
+                <img
+                  src={comment.author.profileImage}
+                  alt={comment.author.userName}
+                  className="w-8 h-8 rounded-full object-cover"
+                />
+              ) : (
+                <FaUserCircle className="text-gray-400 text-3xl" />
+              )}
+              <div>
+                <p className="text-sm text-gray-300">{comment.author.userName}</p>
+                <p className="text-sm text-gray-400">{comment.content}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Add Comment Input Box */}
+        <form
+          onSubmit={handleCommentSubmit}
+          className="flex items-center gap-2 "
+        >
+          <input
+            type="text"
+            value={newComment}
+            onChange={(e) => setNewComment(e.target.value)}
+            placeholder="Add a comment..."
+            className="w-full px-4 py-2 rounded-lg bg-gray-700 text-white outline-none"
+          />
+          <button
+            type="submit"
+            className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+          >
+            Post
+          </button>
+        </form>
       </div>
     </div>
   );

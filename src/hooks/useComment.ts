@@ -5,7 +5,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { toast } from "react-toastify";
 
-const useComment = () => {
+const useComment = (postId:string) => {
   const [newComment, setNewComment] = useState<string>(""); // State for managing the comment content
   const queryClient = useQueryClient();
 
@@ -16,7 +16,7 @@ const useComment = () => {
     },
     onSuccess: (response) => {
       toast.success(response.message || "Comment created successfully!");
-      queryClient.invalidateQueries({ queryKey: ["post",] }); // Invalidate post queries to fetch updated data
+      queryClient.invalidateQueries({ queryKey: ["post",postId ] });  // Invalidate post queries to fetch updated data
       setNewComment(""); // Clear the comment input after successful submission
     },
     onError: (error: AxiosError<unknown>) => {

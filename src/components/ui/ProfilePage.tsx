@@ -78,7 +78,7 @@ const ProfilePage: React.FC<ProfileProps> = ({
   const closeModal = () => setIsModalOpen(false);
 
   return (
-    <div className="text-white ml-44 py-5 mr-10 pt-28">
+    <div className="text-white  py-5 mr-10 pt-28">
       <div className="relative bg-[#6f30d8] h-40 rounded-lg">
         <div className="absolute left-1/2 transform -translate-x-1/2 top-24">
           {userDetails?.profileImage ? (

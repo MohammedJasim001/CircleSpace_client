@@ -26,11 +26,13 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
   const shouldHideNavbarOnly = navbarOnlyHiddenRoutes.includes(pathname);
 
   return (
-    <div>
+    <div >
       {/* Render Sidebar conditionally */}
       {!isAuthPage && <Sidebar />}
       {!(isAuthPage || shouldHideNavbarOnly) && <Navbar />}
-      <main className="flex-1">{children}</main>
+      <main className="flex-1 ml-0 md:ml-44 ">
+  {children}
+</main>
     </div>
   );
 }

@@ -23,7 +23,6 @@ const useSave = () => {
     onSuccess: (response, { userId }) => {
       toast.success(response.message || "save status updated successfully!");
       queryClient.invalidateQueries({ queryKey: ["post",userId] });
-    //   queryClient.invalidateQueries({ queryKey: ["suggestionsProfiles", userId] });
     },
     onError: (error: AxiosError<{ message: string }>) => {
       const errorMessage =
