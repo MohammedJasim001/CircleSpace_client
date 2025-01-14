@@ -123,10 +123,10 @@ export const loginApi = async (values: any) => {
         const res = await api.post('/user/login',values)
         
         if (res.data.token) {
-            sessionStorage.setItem('Access_token', res.data.token ,); // Expires in 1 day
+            localStorage.setItem('Access_token', res.data.token ,); // Expires in 1 day
         }
         if(res.data.user){
-          sessionStorage.setItem('user',JSON.stringify(res.data.user))
+          localStorage.setItem('user',JSON.stringify(res.data.user))
         }
         return res.data
         

@@ -12,7 +12,7 @@ import { useEffect, useState } from "react";
  function Home() {
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
 
-  const { data: posts, isLoading, error } = usePosts();
+  const { data: posts, error } = usePosts();
 
   useEffect(() => {
       const fetchCurrentUserId = async () => {
@@ -28,7 +28,7 @@ import { useEffect, useState } from "react";
     }, []);
   
 
-  if (isLoading) return <div>Loading...</div>;
+  // if (isLoading) return <div>Loading...</div>;
   if (error) return <div>Error loading posts: {error.message}</div>;
 
   return (

@@ -1,21 +1,24 @@
 
 export interface User {
+  profileImage: string;
+  name: string;
+  userName: string;
+  bio: string;
+  posts: { content: string }[];
+  followers: {
+    userName: string;
     _id: string;
-    username: string;
-    email: string;
-    password?: string;
-    bio?: string;
-    profilePicture?: string;
-    followers: string[];
-    following: string[];
-    posts: string[];
-    likedPosts: string[];
-    comments: string[];
-    archivedStories: string[];
-    createdAt: Date;
-    updatedAt: Date;
-    __v?: number;
-  }
+    profileImage: string;
+    followers: { _id: string }[];
+  }[];
+  following: {
+    userName: string;
+    _id: string;
+    profileImage: string;
+    followers: { _id: string }[];
+  }[];
+  _id: string;
+}
   export interface FollowResponse {
     message: string;
     data: User;

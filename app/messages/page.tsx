@@ -1,8 +1,13 @@
+import MainLayout from '@/layout/mainLayout'
 import React from 'react'
 
 const page = () => {
   return (
-    <div>page</div>
+    <MainLayout>
+    <div>
+      page
+    </div>
+    </MainLayout>
   )
 }
 

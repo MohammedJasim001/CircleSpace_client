@@ -6,27 +6,10 @@ import Button from "../Button/Button";
 import { FaUser } from "react-icons/fa6";
 import useFollow from "@/hooks/useFollow";
 import FollowListModal from "../modals/followModal";
+import { User } from "@/types/user";
+import { useRouter } from "next/navigation";
 
-interface User {
-  profileImage: string;
-  name: string;
-  userName: string;
-  bio: string;
-  posts: { content: string }[];
-  followers: {
-    userName: string;
-    _id: string;
-    profileImage: string;
-    followers: { _id: string }[];
-  }[];
-  following: {
-    userName: string;
-    _id: string;
-    profileImage: string;
-    followers: { _id: string }[];
-  }[];
-  _id: string;
-}
+
 
 interface ProfileProps {
   userId: string;
@@ -53,6 +36,8 @@ const ProfilePage: React.FC<ProfileProps> = ({
   const [modalData, setModalData] = useState<UserSummary[]>([]);
   const followMutation = useFollow();
 
+  const router = useRouter()
+
   // Handle Follow/Unfollow
   const handleFollow = (targetId: string) => {
     followMutation.mutate(
@@ -78,7 +63,7 @@ const ProfilePage: React.FC<ProfileProps> = ({
   const closeModal = () => setIsModalOpen(false);
 
   return (
-    <div className="text-white  py-5 mr-10 pt-28">
+    <div className="text-white  py-5 mr-40 pt-28 ml-20">
       <div className="relative bg-[#6f30d8] h-40 rounded-lg">
         <div className="absolute left-1/2 transform -translate-x-1/2 top-24">
           {userDetails?.profileImage ? (
@@ -141,7 +126,7 @@ const ProfilePage: React.FC<ProfileProps> = ({
             </div>
           ) : (
             <div className="flex gap-4">
-              <Button text="Edit Profile" />
+              <Button text="Edit Profile" onClick={()=>router.push('/settings')}/>
             </div>
           )}
         </div>
@@ -160,12 +145,12 @@ const ProfilePage: React.FC<ProfileProps> = ({
 
       <div className="grid grid-cols-2 md:grid-cols-3 gap-4 px-6 mt-6">
         {userDetails?.posts?.map((post, index) => (
-          <div key={index} className="rounded-lg overflow-hidden">
+          <div key={index} className="rounded-lg overflow-hidden ">
             {post.content?.includes("mp4") ||
             post.content?.includes("youtube") ? (
               <video
                 controls
-                className="w-full h-48 object-cover"
+                className="w-full h-56 object-cover"
                 src={post.content}
                 // alt={`Post ${index + 1}`}
               >
@@ -175,7 +160,7 @@ const ProfilePage: React.FC<ProfileProps> = ({
               <img
                 src={post.content}
                 alt={`Post ${index + 1}`}
-                className="w-full h-48 object-cover"
+                className="w-full h-56 object-cover"
               />
             )}
           </div>

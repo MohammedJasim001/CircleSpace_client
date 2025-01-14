@@ -47,7 +47,7 @@ const ProfileImageUpload: React.FC = () => {
 
     // Create a FormData object
     const formData = new FormData();
-    formData.append("image", image);
+    formData.append("media", image);
     formData.append("email", email || ""); // Ensure email is included (if it's available)
 
     // Call the mutate function from the custom hook

@@ -13,7 +13,7 @@ const api = axios.create({
 api.interceptors.request.use(
     (config) => {
         // Get the token from the cookies
-        const token = sessionStorage.getItem("Access_token");  // Read token from cookies
+        const token = localStorage.getItem("Access_token");  // Read token from cookies
 
         if (token) {
             // Attach the token to the Authorization header
