@@ -1,14 +1,18 @@
-import MainLayout from '@/layout/mainLayout'
-import React from 'react'
+import ChatWindow from '@/components/Messages/ChatWindow';
+import MessageSidebar from '@/components/Messages/MessageSidebar';
+import MainLayout from '@/layout/mainLayout';
 
-const page = () => {
+const MessagesPage = () => {
   return (
     <MainLayout>
-    <div>
-      page
-    </div>
+      <div className="flex h-screen">
+        {/* Left Sidebar */}
+        <MessageSidebar/>
+        {/* Chat Window */}
+        <ChatWindow />
+      </div>
     </MainLayout>
-  )
-}
+  );
+};
 
-export default page
+export default MessagesPage;

@@ -30,7 +30,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
       {/* Render Sidebar conditionally */}
       {!isAuthPage && <Sidebar />}
       {!(isAuthPage || shouldHideNavbarOnly) && <Navbar />}
-      <main className="flex-1 ml-0 md:ml-44 ">
+      <main className="flex-1 ml-0 md:ml-36 ">
   {children}
 </main>
     </div>
