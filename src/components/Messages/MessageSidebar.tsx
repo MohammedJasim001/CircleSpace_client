@@ -1,15 +1,17 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
 
-import {useLatestMessages} from '@/hooks/useMessages';
+import { useLatestMessages } from '@/hooks/useMessages';
 import { Chat } from '@/types/chat';
 import { formatMessageTime } from '@/utils/FormateMessageTime';
 import { getUserId } from '@/utils/userDetails';
 import React, { useEffect, useState } from 'react';
 
+interface MessageSidebarProps {
+  onSelectChat: (userId: string) => void;
+}
 
-
-const MessageSidebar = () => {
+const MessageSidebar: React.FC<MessageSidebarProps> = ({ onSelectChat }) => {
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
 
   // Fetch current user ID
@@ -27,15 +29,18 @@ const MessageSidebar = () => {
   }, []);
 
   // Get the latest messages
-  const LatestMessageMutation = useLatestMessages(currentUserId || '');
-  const { data } = LatestMessageMutation;
+  const { data } = useLatestMessages(currentUserId || '');
 
   return (
     <div className="w-1/4 border-r border-[#272932] h-full p-4">
       <h2 className="font-bold text-lg mb-4">Messages</h2>
       <ul>
-        {data?.map((chat:Chat) => (
-          <li key={chat.chatPartner._id} className="mb-2">
+        {data?.map((chat: Chat) => (
+          <li
+            key={chat.chatPartner._id}
+            className="mb-2"
+            onClick={() => onSelectChat(chat.chatPartner._id)} // Set selected chat
+          >
             <div className="p-2 hover:bg-[#32353f] rounded cursor-pointer flex items-center gap-3">
               {/* Profile Image */}
               <img

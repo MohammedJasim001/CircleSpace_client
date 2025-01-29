@@ -18,3 +18,12 @@ export const sendMessage = async (data:{ sender: string; receiver: string; conte
         console.error(error)
     }
 }
+
+export const personalMessage = async (user1:string,user2:string) => {
+    try {
+        const res = await api.get(`user/message/chats/${user1}/${user2}`)
+        return res.data
+    } catch (error) {
+        console.error(error)
+    }
+}

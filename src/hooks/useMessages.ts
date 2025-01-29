@@ -1,4 +1,4 @@
-import { getLatestMessages, sendMessage } from "@/services/messages"
+import { getLatestMessages, personalMessage, sendMessage } from "@/services/messages"
 import { useMutation, useQuery } from "@tanstack/react-query"
 
 export const useLatestMessages = (userId:string) =>{
@@ -27,11 +27,20 @@ export const useSendMessage = () => {
     },
     onSuccess: (data) => {
       console.log('Message sent successfully:', data);
-      // You can perform additional actions on success, such as logging or updating a cache
     },
     onError: (error) => {
       console.error('Error sending message:', error);
-      // Handle errors globally if required
     },
+  });
+};
+
+export const useGetPersonalChat = (user1: string, user2: string) => {
+  return useQuery({
+    queryKey: ['personalChat', user1, user2], 
+    queryFn: async () => {
+      if (!user1 || !user2) throw new Error('Both user1 and user2 are required');
+      return await personalMessage(user1, user2);
+    },
+    enabled: !!user1 && !!user2, 
   });
 };
