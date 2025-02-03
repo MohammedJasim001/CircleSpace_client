@@ -14,5 +14,15 @@ export default {
       },
     },
   },
-  plugins: [],
+  plugins: [
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    require('tailwind-scrollbar-hide')
+  ]
 } satisfies Config;
+
+// module.exports = {
+//   plugins: [
+//     require('tailwind-scrollbar-hide')
+//   ]
+// }
+

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { IoSend } from "react-icons/io5";
 
 interface MessageInputProps {
   onSendMessage: (messageContent: string) => void;
@@ -17,20 +18,24 @@ const MessageInput: React.FC<MessageInputProps> = ({ onSendMessage }) => {
   };
 
   return (
-    <div className="mt-4 flex items-center justify-center">
+    <div className="mt-4 flex items-center justify-center gap-4 mr relative">
       <input
         type="text"
         value={message}
         onChange={(e) => setMessage(e.target.value)}
-        className="border w-full rounded p-2 bg-gray-600"
+        className="h-10 w-full rounded p-2 bg-gray-600"
         placeholder="Type your message..."
       />
-      <button
+      <IoSend 
+      onClick={handleSend}
+      className='text-3xl absolute right-2'
+      />
+      {/* <button
         onClick={handleSend}
         className="bg-blue-500 text-white px-4 py-2 rounded "
       >
         Send
-      </button>
+      </button> */}
     </div>
   );
 };

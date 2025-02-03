@@ -13,6 +13,7 @@ interface MessageSidebarProps {
 
 const MessageSidebar: React.FC<MessageSidebarProps> = ({ onSelectChat }) => {
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+  const [selectedChatId, setSelectedChatId] = useState<string | null>(null); // Track selected chat
 
   // Fetch current user ID
   useEffect(() => {
@@ -31,6 +32,11 @@ const MessageSidebar: React.FC<MessageSidebarProps> = ({ onSelectChat }) => {
   // Get the latest messages
   const { data } = useLatestMessages(currentUserId || '');
 
+  const handleChatSelect = (userId: string) => {
+    setSelectedChatId(userId); // Update selected chat
+    onSelectChat(userId); // Pass it to the parent component
+  };
+
   return (
     <div className="w-1/4 border-r border-[#272932] h-full p-4">
       <h2 className="font-bold text-lg mb-4">Messages</h2>
@@ -38,8 +44,12 @@ const MessageSidebar: React.FC<MessageSidebarProps> = ({ onSelectChat }) => {
         {data?.map((chat: Chat) => (
           <li
             key={chat.chatPartner._id}
-            className="mb-2"
-            onClick={() => onSelectChat(chat.chatPartner._id)} // Set selected chat
+            className={`mb-2 ${
+              selectedChatId === chat.chatPartner._id
+                ? 'bg-[#32353f]' // Highlight selected chat
+                : ''
+            }`}
+            onClick={() => handleChatSelect(chat.chatPartner._id)} // Set selected chat
           >
             <div className="p-2 hover:bg-[#32353f] rounded cursor-pointer flex items-center gap-3">
               {/* Profile Image */}

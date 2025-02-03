@@ -18,9 +18,10 @@ api.interceptors.request.use(
         if (token) {
             // Attach the token to the Authorization header
             config.headers['Authorization'] = `Bearer ${token}`;
-        }else {
-            console.error("No token found in sessionStorage.");
         }
+        // else {
+        //     console.error("No token found in sessionStorage.");
+        // }
 
         return config;
     },
