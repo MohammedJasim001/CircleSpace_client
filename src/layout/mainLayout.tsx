@@ -22,8 +22,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
   const authRoutes = ["/auth/login", "/auth/register", "/auth/otp"];
   const isAuthPage = authRoutes.includes(pathname);
 
-  const navbarOnlyHiddenRoutes = ['/messages'];
-  const shouldHideNavbarOnly = navbarOnlyHiddenRoutes.includes(pathname);
+  const shouldHideNavbarOnly = pathname.startsWith('/messages');
 
   return (
     <div >

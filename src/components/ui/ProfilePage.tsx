@@ -38,6 +38,10 @@ const ProfilePage: React.FC<ProfileProps> = ({
 
   const router = useRouter()
 
+  const handleMessage = (userId:string)=>{
+    router.push(`messages/${userId}`)
+  }
+
   // Handle Follow/Unfollow
   const handleFollow = (targetId: string) => {
     followMutation.mutate(
@@ -122,7 +126,7 @@ const ProfilePage: React.FC<ProfileProps> = ({
                 onClick={() => handleFollow(userId)}
               />
 
-              <Button text="Message" />
+              <Button text="Message" onClick={()=>handleMessage(userDetails?._id)}/>
             </div>
           ) : (
             <div className="flex gap-4">

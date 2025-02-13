@@ -27,7 +27,10 @@ const validationSchema = Yup.object({
 });
 
 const RegistrationForm: React.FC = () => {
+  
   const router = useRouter();
+
+
 
   // Initial form values
   const initialValues: RegistrationFormValues = {

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import MessageInput from './MessageInput';
 import { io, Socket } from 'socket.io-client';
 import { useGetPersonalChat, useSendMessage } from '@/hooks/useMessages';
@@ -15,14 +15,12 @@ dayjs.extend(isToday);
 dayjs.extend(isYesterday);
 
 interface Messages {
-  _id:string,
-  sender:{_id:string},
-  receiver:string,
-  content:string
-  createdAt:Date
+  _id: string;
+  sender: { _id: string };
+  receiver: string;
+  content: string;
+  createdAt: Date;
 }
-
-
 
 const SOCKET_URL = 'http://localhost:5010';
 
@@ -35,6 +33,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ chatPartnerId }) => {
   const [socket, setSocket] = useState<Socket | null>(null);
   const [messages, setMessages] = useState<Messages[]>([]);
   const [isSocketConnected, setIsSocketConnected] = useState(false);
+  const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     const fetchUserId = async () => {
@@ -49,7 +48,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ chatPartnerId }) => {
   useEffect(() => {
     if (data) {
       const uniqueMessages = data.filter(
-        (msg:Messages, index: number, self: Messages[]) =>
+        (msg: Messages, index: number, self: Messages[]) =>
           index === self.findIndex((m) => m._id === msg._id)
       );
       setMessages(uniqueMessages);
@@ -64,6 +63,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ chatPartnerId }) => {
     setIsSocketConnected(true);
 
     newSocket.on('receiveMessage', (message) => {
+      console.log(message,'receive message');
       setMessages((prevMessages) => {
         if (!prevMessages.some((msg) => msg._id === message._id)) {
           return [...prevMessages, message];
@@ -72,11 +72,18 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ chatPartnerId }) => {
       });
     });
 
+    // newSocket.on('receiveMessage',(message)=>{
+    //   console.log(message,'receive message');
+    //   setMessages((prev)=>[...prev,{...message,sender:{_id:message.sender}}])
+    // })
+
+
     return () => {
       newSocket.disconnect();
       setIsSocketConnected(false);
     };
-  }, [chatPartnerId]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [chatPartnerId,currentUserId]);
 
   const { mutate } = useSendMessage();
 
@@ -84,10 +91,11 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ chatPartnerId }) => {
     if (!chatPartnerId || !currentUserId) return;
 
     const newMessage = {
-      sender:  currentUserId ,
+      _id: Date.now().toString(), 
+      sender: { _id: currentUserId }, 
       receiver: chatPartnerId,
       content: messageContent,
-      // createdAt: new Date().toISOString(),
+      createdAt: new Date(), 
     };
 
     setMessages((prevMessages) => [...prevMessages, newMessage]);
@@ -96,6 +104,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ chatPartnerId }) => {
       { sender: currentUserId, receiver: chatPartnerId, content: messageContent },
       {
         onSuccess: (sentMessage) => {
+          console.log("Sending message:", { sentMessage});
           socket?.emit('sendMessage', sentMessage);
         },
         // onError: () => {
@@ -130,8 +139,22 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ chatPartnerId }) => {
 
   const groupedMessages = groupMessagesByDate();
 
+  // Scroll to the bottom when messages change
+  useEffect(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [messages]);
+
+  // Scroll to the bottom on initial render
+  useEffect(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, []);
+
   return (
-    <div className="w-3/4 h-full p-4 flex flex-col overflow-y-scroll scrollbar-hide">
+    <div className="w-full h-full p-4 flex flex-col overflow-y-scroll scrollbar-hide">
       {chatPartnerId ? (
         <>
           <div className="flex-grow">
@@ -148,18 +171,16 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ chatPartnerId }) => {
                         }`}
                       >
                         <p>{message.content}</p>
-                      <div
-                        className={`text-xs text-gray-400 text-right ml-10`}
-                      >
-                        {dayjs(message.createdAt).format('hh:mm A')}
+                        <div className={`text-xs text-gray-400 text-right ml-10`}>
+                          {dayjs(message.createdAt).format('hh:mm A')}
+                        </div>
                       </div>
-                      </div>
-                      {/* Timestamp outside message bubble */}
                     </div>
                   );
                 })}
               </div>
             ))}
+            <div ref={messagesEndRef} />
           </div>
           <MessageInput onSendMessage={sendMessage} />
         </>

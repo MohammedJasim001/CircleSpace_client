@@ -1,4 +1,5 @@
 import VerifyOTP from "@/components/Forms/VerifyOtp"
+import { Suspense } from "react";
 
 
 const OTP:React.FC = () => {
@@ -8,6 +9,15 @@ const OTP:React.FC = () => {
         
     )
 
+
 }
 
-export default OTP
+
+
+const otpWithSuspense: React.FC = () => (
+  <Suspense fallback={<div>Loading...</div>}>
+    <OTP />
+  </Suspense>
+);
+
+export default otpWithSuspense

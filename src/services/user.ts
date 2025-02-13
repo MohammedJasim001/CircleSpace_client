@@ -35,4 +35,19 @@ export const searchUserApi = async (query:string)=>{
     } catch (error) {
         console.log(error)
     }
+}
+
+
+export const editProfileApi = async (formData:FormData,userId:string) =>{
+    try {
+        const res = await api.put(`/user/editprofile/${userId}`,formData,{
+            headers:{
+                "Content-Type":"multipart/form-data"
+              }
+        })
+        return res.data
+    } catch (error) {
+        console.log(error)
+        throw error
     }
+}

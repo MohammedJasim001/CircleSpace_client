@@ -25,6 +25,12 @@ const Sidebar: React.FC = () => {
   }
 
   const isActive = (path: string) => {
+    if (path === "/messages" && pathname.startsWith("/messages")) {
+      return true;
+    }
+    if (path === '/settings' && pathname.startsWith('/settings')) {
+      return true
+    }
     return pathname === path;
   };
 

@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import useComment from "@/hooks/useComment";
 import React, { useState, useEffect } from "react";
 import { FaUserCircle } from "react-icons/fa";

@@ -1,5 +1,5 @@
 import { getLatestMessages, personalMessage, sendMessage } from "@/services/messages"
-import { useMutation, useQuery } from "@tanstack/react-query"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 
 export const useLatestMessages = (userId:string) =>{
     return useQuery({
@@ -16,20 +16,27 @@ export const useLatestMessages = (userId:string) =>{
 
 
 export const useSendMessage = () => {
+  const queryClient = useQueryClient(); // Access the query client
+
   return useMutation({
     mutationFn: async (messageData: {
       sender: string;
       receiver: string;
       content: string;
     }) => {
-      
-      return await sendMessage(messageData) // Response from backend
+      return await sendMessage(messageData); // Send the message to the backend
     },
-    onSuccess: (data) => {
-      console.log('Message sent successfully:', data);
+    onSuccess: (data, variables) => {
+      // Invalidate relevant queries to refresh the data
+      queryClient.invalidateQueries({ queryKey: ["message", variables.sender] });
+      queryClient.invalidateQueries({ queryKey: ["message", variables.receiver] });
+      queryClient.invalidateQueries({ queryKey: ["personalChat", variables.sender, variables.receiver] });
+      queryClient.invalidateQueries({ queryKey: ["personalChat", variables.receiver, variables.sender] });
+
+      console.log("Message sent successfully:", data);
     },
     onError: (error) => {
-      console.error('Error sending message:', error);
+      console.error("Error sending message:", error);
     },
   });
 };

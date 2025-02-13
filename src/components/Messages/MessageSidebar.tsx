@@ -5,15 +5,14 @@ import { useLatestMessages } from '@/hooks/useMessages';
 import { Chat } from '@/types/chat';
 import { formatMessageTime } from '@/utils/FormateMessageTime';
 import { getUserId } from '@/utils/userDetails';
+import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 
-interface MessageSidebarProps {
-  onSelectChat: (userId: string) => void;
-}
-
-const MessageSidebar: React.FC<MessageSidebarProps> = ({ onSelectChat }) => {
+const MessageSidebar: React.FC = () => {
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
-  const [selectedChatId, setSelectedChatId] = useState<string | null>(null); // Track selected chat
+  const [selectedChatId, setSelectedChatId] = useState<string | null>(null);
+
+  const router = useRouter();
 
   // Fetch current user ID
   useEffect(() => {
@@ -33,8 +32,10 @@ const MessageSidebar: React.FC<MessageSidebarProps> = ({ onSelectChat }) => {
   const { data } = useLatestMessages(currentUserId || '');
 
   const handleChatSelect = (userId: string) => {
-    setSelectedChatId(userId); // Update selected chat
-    onSelectChat(userId); // Pass it to the parent component
+    if (userId !== selectedChatId) {
+      setSelectedChatId(userId); 
+      router.replace(`/messages/${userId}`); 
+    }
   };
 
   return (
@@ -45,27 +46,22 @@ const MessageSidebar: React.FC<MessageSidebarProps> = ({ onSelectChat }) => {
           <li
             key={chat.chatPartner._id}
             className={`mb-2 ${
-              selectedChatId === chat.chatPartner._id
-                ? 'bg-[#32353f]' // Highlight selected chat
-                : ''
+              selectedChatId === chat.chatPartner._id ? 'bg-[#32353f] rounded-lg' : ''
             }`}
-            onClick={() => handleChatSelect(chat.chatPartner._id)} // Set selected chat
+            onClick={() => handleChatSelect(chat.chatPartner._id)}
           >
             <div className="p-2 hover:bg-[#32353f] rounded cursor-pointer flex items-center gap-3">
-              {/* Profile Image */}
               <img
                 src={chat.chatPartner.profileImage}
                 alt={`${chat.chatPartner.userName}'s profile`}
                 className="w-10 h-10 rounded-full object-cover border border-gray-300"
               />
-              {/* User and Message Info */}
               <div className="flex-1">
                 <p className="font-medium text-white">{chat.chatPartner.userName}</p>
                 <p className="text-sm text-gray-200">{chat.latestMessage}</p>
               </div>
-              {/* Timestamp */}
               <span className="text-xs text-gray-300">
-                {formatMessageTime(chat.timestamp)}
+              {formatMessageTime(chat.timestamp)}
               </span>
             </div>
           </li>

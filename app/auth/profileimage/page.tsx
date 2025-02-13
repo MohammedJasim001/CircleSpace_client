@@ -5,17 +5,20 @@ import { useProfileImageUpload } from "@/hooks/useProfileImag";
 import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/navigation";
-import React, { useState } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 
 const ProfileImageUpload: React.FC = () => {
   const [image, setImage] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [email, setEmail] = useState<string | null>(null);
 
   const router = useRouter()
 
   const searchParams = useSearchParams();
-  const email = searchParams.get('email');
+  useEffect(() => {
+    setEmail(searchParams.get("email"));
+  }, [searchParams]);
 
   // Use the custom hook for image upload
   const { mutate, isPending, isError  } = useProfileImageUpload();
@@ -109,4 +112,10 @@ const ProfileImageUpload: React.FC = () => {
   );
 };
 
-export default ProfileImageUpload;
+const ProfileImageUploadWithSuspense: React.FC = () => (
+  <Suspense fallback={<div>Loading...</div>}>
+    <ProfileImageUpload />
+  </Suspense>
+);
+
+export default ProfileImageUploadWithSuspense;

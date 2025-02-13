@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { getUserId } from "@/utils/userDetails";
 import ProfilePage from "@/components/ui/ProfilePage";
-import useProfile from "@/hooks/useProfile";
+import {useProfile} from "@/hooks/useProfile";
 import MainLayout from "@/layout/mainLayout";
 
 const UserProfilePage = () => {
