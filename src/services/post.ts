@@ -4,7 +4,7 @@ import { AxiosError } from "axios";
 
 export const getPostsApi = async (): Promise<GetPostResponse[]> => {
   try {
-    const res = await api.get(`/api/user/post`);
+    const res = await api.get(`/user/post`);
     return res.data.data 
   } catch (error) {
     console.error("Error fetching posts:", error);
@@ -15,7 +15,7 @@ export const getPostsApi = async (): Promise<GetPostResponse[]> => {
 export const createPostApi = async (formData: FormData ,id:string)=>{
 
   try {
-      const res = await api.post (`/api/user/post/${id}`, formData,{
+      const res = await api.post (`/user/post/${id}`, formData,{
           headers:{
               "Content-Type":"multipart/form-data"
             }

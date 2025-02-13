@@ -120,7 +120,7 @@ export const profileImageApi = async (formdata:FormData) =>{
 
 export const loginApi = async (values: any) => {
     try {
-        const res = await api.post('/api/user/login',values)
+        const res = await api.post('/user/login',values)
         
         if (res.data.token) {
             localStorage.setItem('Access_token', res.data.token ,); // Expires in 1 day
