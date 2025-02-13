@@ -9,10 +9,7 @@ const OTP:React.FC = () => {
         
     )
 
-
 }
-
-
 
 const otpWithSuspense: React.FC = () => (
   <Suspense fallback={<div>Loading...</div>}>
