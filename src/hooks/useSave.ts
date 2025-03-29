@@ -21,7 +21,7 @@ const useSave = () => {
       return await savePostApi(userId, postId);
     },
     onSuccess: (response, { userId }) => {
-      toast.success(response.message || "save status updated successfully!");
+      // toast.success(response.message || "save status updated successfully!");
       queryClient.invalidateQueries({ queryKey: ["post",userId] });
     },
     onError: (error: AxiosError<{ message: string }>) => {

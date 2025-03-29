@@ -8,6 +8,7 @@ import MainLayout from "@/layout/mainLayout";
 import { getUserId } from "@/utils/userDetails";
 import { FaHeart, FaRegHeart, FaComment, FaPaperPlane, FaSave } from "react-icons/fa";
 import CommentModal from "@/components/modals/CommentModal";
+import ReelSkelton from "@/components/skeltons/reelSkelton";
 
 interface Comment {
   _id: string;
@@ -19,7 +20,7 @@ interface Post {
   _id: string;
   content: string;
   description: string;
-  likes: string[];  // Array of user IDs who liked the post
+  likes: string[];  
   comments: Comment[];
   createdAt: string;
   updatedAt: string;
@@ -70,10 +71,9 @@ const VideoPosts = () => {
     }
   }, [videoPosts, currentUserId]);
 
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading) return <ReelSkelton/>
   if (isError) return <div>Error: {error?.message}</div>;
 
-  // Handle like toggle
   const handleLikeToggle = (postId: string) => {
     toggleLike(
       { userId: currentUserId || "", postId: postId },

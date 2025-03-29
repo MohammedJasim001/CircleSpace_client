@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 
 const ChatPage = () => {
   const params = useParams();
-  const chatPartnerId = params.userId as string; // Get user ID from the URL
+  const chatPartnerId = params.userId as string; 
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

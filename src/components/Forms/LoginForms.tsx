@@ -115,7 +115,7 @@ const LoginForm: React.FC = () => {
               <div className="text-center text-sm text-gray-400 mt-4">
                 Don't have an account?{' '}
                 <Link
-                  href="/auth/registration"
+                  href="/auth/register"
                   className="text-blue-500 hover:underline"
                 >
                   Sign up

@@ -15,7 +15,8 @@ const useComment = (postId:string) => {
       return response;
     },
     onSuccess: (response) => {
-      toast.success(response.message || "Comment created successfully!");
+      // toast.success(response.message || "Comment created successfully!");
+      console.log(response);
       queryClient.invalidateQueries({ queryKey: ["post",postId ] });  // Invalidate post queries to fetch updated data
       setNewComment(""); // Clear the comment input after successful submission
     },

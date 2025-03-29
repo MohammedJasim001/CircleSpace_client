@@ -7,7 +7,7 @@ import { FaUser } from "react-icons/fa6";
 import useFollow from "@/hooks/useFollow";
 import FollowListModal from "../modals/followModal";
 import { User } from "@/types/user";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 
 
@@ -37,6 +37,7 @@ const ProfilePage: React.FC<ProfileProps> = ({
   const followMutation = useFollow();
 
   const router = useRouter()
+  const pathname = usePathname()
 
   const handleMessage = (userId:string)=>{
     router.push(`messages/${userId}`)
@@ -54,6 +55,7 @@ const ProfilePage: React.FC<ProfileProps> = ({
     );
   };
 
+  
   // Open the modal for followers or following list
   const openModal = (type: "followers" | "following") => {
     setModalTitle(type === "followers" ? "Followers" : "Following");
@@ -67,7 +69,7 @@ const ProfilePage: React.FC<ProfileProps> = ({
   const closeModal = () => setIsModalOpen(false);
 
   return (
-    <div className="text-white  py-5 mr-40 pt-28 ml-20">
+    <div className="text-white  py-5 mr-40 pt-24 ml-20">
       <div className="relative bg-[#6f30d8] h-40 rounded-lg">
         <div className="absolute left-1/2 transform -translate-x-1/2 top-24">
           {userDetails?.profileImage ? (
@@ -138,38 +140,30 @@ const ProfilePage: React.FC<ProfileProps> = ({
 
       <div className="mt-10 px-6">
         <div className="flex border-b-2 border-gray-700">
-          <button className="text-white px-4 py-2 border-b-2 border-[#6f30d8]">
+          <button
+            onClick={() => router.push(`/${userId}`)}
+            className={`px-4 py-2 ${
+              pathname === `/${userId}`
+                ? "text-white border-b-2 border-[#6f30d8]"
+                : "text-gray-400"
+            }`}
+          >
             POSTS
           </button>
-          <button className="text-gray-400 px-4 py-2">
+          <button
+            onClick={() => router.push(`/${userId}/saved`)}
+            className={`px-4 py-2 ${
+              pathname === `/${userId}/saved`
+                ? "text-white border-b-2 border-[#6f30d8]"
+                : "text-gray-400"
+            }`}
+          >
             SAVED
-            </button>
+          </button>
         </div>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-4 px-6 mt-6">
-        {userDetails?.posts?.map((post, index) => (
-          <div key={index} className="rounded-lg overflow-hidden ">
-            {post.content?.includes("mp4") ||
-            post.content?.includes("youtube") ? (
-              <video
-                controls
-                className="w-full h-56 object-cover"
-                src={post.content}
-                // alt={`Post ${index + 1}`}
-              >
-                Your browser does not support the video tag.
-              </video>
-            ) : (
-              <img
-                src={post.content}
-                alt={`Post ${index + 1}`}
-                className="w-full h-56 object-cover"
-              />
-            )}
-          </div>
-        ))}
-      </div>
+     
 
       {/* Modal */}
       <FollowListModal

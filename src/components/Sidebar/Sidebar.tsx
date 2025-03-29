@@ -8,6 +8,7 @@ import { MdPostAdd } from "react-icons/md";
 import { IoSettings } from "react-icons/io5";
 import { BiMoviePlay } from "react-icons/bi";
 import Link from "next/link";
+import Image from "next/image";
 
 
 const Sidebar: React.FC = () => {
@@ -35,9 +36,15 @@ const Sidebar: React.FC = () => {
   };
 
   return (
-    <div className="w-28 bg-[#272932] text-white min-h-screen p-4 flex flex-col items-center fixed z-20">
-      <h2 className="mt-5 font-serif mb-6 flex items-center gap-2">CircleSpace</h2>
-      <ul className="flex flex-col items-center gap-10 w-full mt-20">
+    <div className="w-28 bg-[#272932] text-white min-h-screen py-4 flex flex-col items-center fixed z-20">
+      <Image
+        width={200}
+        height={200}
+        src={'/images/logoName.png'}
+        alt="appLogo"
+        className=" w-full h-20 mt-10"
+      />
+      <ul className="flex flex-col items-center gap-10 w-full mt-16">
         {/* Top Section */}
         <li className="relative group">
           <Link

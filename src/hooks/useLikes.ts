@@ -21,7 +21,8 @@ const useLike = () => {
       return await likeToggleApi(userId, postId);
     },
     onSuccess: (response, { userId }) => {
-      toast.success(response.message || "Like status updated successfully!");
+      // toast.success(response.message || "Like status updated successfully!");
+      console.log(response);
       queryClient.invalidateQueries({ queryKey: ["post",userId] });
     //   queryClient.invalidateQueries({ queryKey: ["suggestionsProfiles", userId] });
     },

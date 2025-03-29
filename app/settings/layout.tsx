@@ -15,7 +15,7 @@ type SettingsLayoutProps = {
 const SettingsLayout: React.FC<SettingsLayoutProps> = ({ children }) => {
   const router = useRouter()
   const handleLogout = () =>{
-    localStorage.clear()
+    localStorage.removeItem('user')
     router.push('/auth/login')
   }
   const pathname = usePathname(); 
@@ -68,10 +68,8 @@ const SettingsLayout: React.FC<SettingsLayoutProps> = ({ children }) => {
         </li>
        
 
-        {/* Divider */}
         <hr className="w-full border-gray-500 mt-40 text-[#8F8F8F]" />
 
-        {/* Bottom Section */}
         <li
          onClick={handleLogout}
          className="flex gap-3 cursor-pointer hover:bg-[#32353f] w-full h-12 rounded-lg items-center pl-3">

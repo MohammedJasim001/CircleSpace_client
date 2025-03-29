@@ -68,6 +68,8 @@ const PostView: React.FC<PostCardProps> = ({ post, currentUserId }) => {
   const { mutate: addComment } = useComment(_id);
   const { mutate: savePost } = useSave();
 
+  console.log(currentUserId,'current user id from postview');
+
   useEffect(() => {
     // Save the saved state to localStorage whenever it changes
     localStorage.setItem(`savedPost_${_id}`, JSON.stringify(isSaved));

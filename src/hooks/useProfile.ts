@@ -26,7 +26,7 @@ export const useEditProfile = () => {
       // ✅ Invalidate user query to refetch updated data
       queryClient.invalidateQueries({ queryKey: ["profile"] });
 
-      toast.success(data?.message);
+      // toast.success(data?.message);
       console.log(data);
     },
     onError: (error: AxiosError<{message:string}>) => {

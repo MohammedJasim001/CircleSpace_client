@@ -7,9 +7,10 @@ interface FollowListModalProps {
   closeModal: () => void;
   title: string;
   users: { userName: string; _id: string; profileImage: string; followers: { _id: string }[] }[]; 
-  currentUserId: string;
+  currentUserId: string ;
   handleFollow: (targetId: string) => void;
 }
+
 
 const FollowListModal: React.FC<FollowListModalProps> = ({
   isOpen,
@@ -27,15 +28,15 @@ const FollowListModal: React.FC<FollowListModalProps> = ({
 
   const updateUserFollowStatus = (targetId: string) => {
     setUpdatedUsers((prevUsers) => {
-      return prevUsers.map((user) =>
+      return prevUsers?.map((user) =>
         user._id === targetId
           ? {
               ...user,
-              followers: user.followers.some(
-                (follower) => follower._id === currentUserId
+              followers: user?.followers?.some(
+                (follower) => follower?._id === currentUserId
               )
                 ? user.followers.filter(
-                    (follower) => follower._id !== currentUserId
+                    (follower) => follower?._id !== currentUserId
                   )
                 : [...user.followers, { _id: currentUserId }]
             }
@@ -59,21 +60,21 @@ const FollowListModal: React.FC<FollowListModalProps> = ({
           <button onClick={closeModal} className="text-gray-500">X</button>
         </div>
         <div className="max-h-80 overflow-y-auto">
-          {updatedUsers.map((user) => (
-            <div key={user._id} className="flex items-center justify-between mb-4">
+          {updatedUsers?.map((user) => (
+            <div key={user?._id} className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-4">
                 {user.profileImage ? (
                   <img
-                    src={user.profileImage}
-                    alt={user.userName}
+                    src={user?.profileImage}
+                    alt={user?.userName}
                     className="w-10 h-10 rounded-full"
                   />
                 ) : (
                   <div className="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center text-gray-700">
-                    <span>{user.userName}</span>
+                    <span>{user?.userName}</span>
                   </div>
                 )}
-                <span className="text-lg">{user.userName}</span>
+                <span className="text-lg">{user?.userName}</span>
               </div>
               <div>
                 {user._id !== currentUserId ?

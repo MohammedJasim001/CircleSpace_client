@@ -16,7 +16,7 @@ const useFollow = () =>{
             return await followApi(userId,targetId)
         },
         onSuccess:(response,{userId}) =>{
-             toast.success(response.message || "follow status updated successfully!");
+            //  toast.success(response.message || "follow status updated successfully!");
              queryClient.invalidateQueries({ queryKey: ["profile",userId] });
              queryClient.invalidateQueries({ queryKey: ["suggestion",userId] });
         },

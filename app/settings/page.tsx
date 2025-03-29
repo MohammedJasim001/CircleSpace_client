@@ -8,17 +8,17 @@ import React, { useEffect, useState } from "react";
 
 const Settings = () => {
   const { mutate: editProfile, isPending } = useEditProfile();
-  
+
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
-  
-  const { data: userProfile } = useProfile(currentUserId );
+
+  const { data: userProfile } = useProfile(currentUserId);
 
   const [name, setName] = useState("");
   const [userName, setUserName] = useState("");
   const [bio, setBio] = useState("");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
-  
+
   useEffect(() => {
     const fetchCurrentUserId = async () => {
       try {
@@ -28,7 +28,7 @@ const Settings = () => {
         console.error("Error fetching user ID:", error);
       }
     };
-    
+
     fetchCurrentUserId();
   }, []);
 
@@ -44,12 +44,11 @@ const Settings = () => {
     const file = event.target.files?.[0];
     if (file) {
       setSelectedFile(file);
-      setSelectedImage(URL.createObjectURL(file)); 
+      setSelectedImage(URL.createObjectURL(file));
     }
   };
 
   const handleProfileUpdate = async () => {
-
     if (!currentUserId) {
       console.log("User ID is missing!");
       return;
@@ -70,11 +69,14 @@ const Settings = () => {
     <div className="pt-24 pr-32 text-white min-h-screen mb-3">
       <h1 className="text-3xl font-bold mb-8">Edit Profile</h1>
 
-      {/* Profile Info */}
       <div className="bg-[#272932] p-6 rounded-lg flex items-center justify-between mb-8">
         <div className="flex items-center">
           <img
-            src={selectedImage || userProfile?.data?.profileImage || "/default-avatar.png"}
+            src={
+              selectedImage ||
+              userProfile?.data?.profileImage ||
+              "/default-avatar.png"
+            }
             alt="Profile"
             className="w-20 h-20 rounded-full mr-6"
           />
@@ -84,24 +86,22 @@ const Settings = () => {
           </div>
         </div>
         <div>
-  <input 
-    type="file" 
-    accept="image/*" 
-    id="profileUpload" 
-    className="hidden" 
-    onChange={handleImageChange} 
-  />
-  <label 
-    htmlFor="profileUpload" 
-    className="cursor-pointer bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition"
-  >
-    Change Photo
-  </label>
-</div>
-
+          <input
+            type="file"
+            accept="image/*"
+            id="profileUpload"
+            className="hidden"
+            onChange={handleImageChange}
+          />
+          <label
+            htmlFor="profileUpload"
+            className="cursor-pointer bg-[#6a3aba] text-white px-4 py-2 rounded-md hover:bg-[#7540cb] transition"
+          >
+            Change Photo
+          </label>
+        </div>
       </div>
 
-      {/* Name Input */}
       <div className="mb-8">
         <h2 className="text-xl font-semibold mb-2">Name</h2>
         <input
@@ -113,7 +113,6 @@ const Settings = () => {
         />
       </div>
 
-      {/* Username Input */}
       <div className="mb-8">
         <h2 className="text-xl font-semibold mb-2">Username</h2>
         <input
@@ -125,7 +124,6 @@ const Settings = () => {
         />
       </div>
 
-      {/* Bio Section */}
       <div className="mb-8">
         <h2 className="text-xl font-semibold mb-2">Bio</h2>
         <textarea
@@ -136,8 +134,10 @@ const Settings = () => {
         ></textarea>
       </div>
 
-      {/* Submit Button */}
-      <Button text={isPending ? "Saving..." : "Save Changes"} onClick={handleProfileUpdate} />
+      <Button
+        text={isPending ? "Saving..." : "Save Changes"}
+        onClick={handleProfileUpdate}
+      />
     </div>
   );
 };

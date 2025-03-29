@@ -7,6 +7,7 @@ import { formatMessageTime } from '@/utils/FormateMessageTime';
 import { getUserId } from '@/utils/userDetails';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
+import MessageSidebarSkeleton from '../skeltons/messageSidebarSkelton';
 
 const MessageSidebar: React.FC = () => {
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
@@ -14,7 +15,6 @@ const MessageSidebar: React.FC = () => {
 
   const router = useRouter();
 
-  // Fetch current user ID
   useEffect(() => {
     const fetchCurrentUserId = async () => {
       try {
@@ -28,8 +28,7 @@ const MessageSidebar: React.FC = () => {
     fetchCurrentUserId();
   }, []);
 
-  // Get the latest messages
-  const { data } = useLatestMessages(currentUserId || '');
+  const { data, isLoading } = useLatestMessages(currentUserId || '');
 
   const handleChatSelect = (userId: string) => {
     if (userId !== selectedChatId) {
@@ -37,6 +36,8 @@ const MessageSidebar: React.FC = () => {
       router.replace(`/messages/${userId}`); 
     }
   };
+
+  if(isLoading) return <MessageSidebarSkeleton/>
 
   return (
     <div className="w-1/4 border-r border-[#272932] h-full p-4">
