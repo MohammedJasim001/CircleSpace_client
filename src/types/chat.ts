@@ -8,4 +8,5 @@ export interface Chat {
   latestMessage: string;
   timestamp: string;
   senderId: string;
+  unreadCount:number
 }

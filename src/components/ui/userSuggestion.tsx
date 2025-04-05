@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 import React  from 'react';
 import { FaUserCircle } from 'react-icons/fa';
-import useUserSuggestion from '@/hooks/useUserSuggestion';
+import useUserSuggestion from '@/hooks/useUser';
 import useFollow from '@/hooks/useFollow';
 import Button from '../Button/Button';
 import { useRouter } from 'next/navigation';
