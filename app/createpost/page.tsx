@@ -41,7 +41,7 @@ function CreatePostPage() {
   return (
     <div>
       <MainLayout>
-        <div className="pt-28 max-w-[90%]">
+        <div className="pt-20 sm:pt-28 max-w-[90%] ml-5 sm:ml-0">
           <h2 className="text-white text-xl font-semibold mb-4">
             Create new post{" "}
           </h2>

@@ -1,4 +1,4 @@
-import { Message } from '@/hooks/useSockets';
+import { Message } from '@/types/message';
 import { formatMessageTime } from '@/utils/dateFormaters';
 import React from 'react';
 

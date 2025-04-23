@@ -2,18 +2,11 @@ import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import isToday from "dayjs/plugin/isToday";
 import isYesterday from "dayjs/plugin/isYesterday";
+import { Message } from "@/types/message";
 
 dayjs.extend(relativeTime);
 dayjs.extend(isToday);
 dayjs.extend(isYesterday);
-
-interface Message {
-    _id: string;
-    sender: { _id: string };
-    receiver: string;
-    content: string;
-    createdAt: Date;
-  }
 
 export const formatMessageDate = (date: Date): string => {
   const messageDate = dayjs(date);

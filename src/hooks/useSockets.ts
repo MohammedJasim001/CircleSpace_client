@@ -1,16 +1,9 @@
 /* eslint-disable react-hooks/exhaustive-deps */
+import { Message } from '@/types/message';
 import { useState, useEffect, useCallback } from 'react';
 import { io, Socket } from 'socket.io-client';
 
 const SOCKET_URL = "http://localhost:5010";
-
-export interface Message {
-  _id: string;
-  sender: string;
-  receiver: string;
-  content: string;
-  createdAt: Date;
-}
 
 export const useSocket = (
   currentUserId: string | null, 

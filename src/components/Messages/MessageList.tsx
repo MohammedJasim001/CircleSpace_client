@@ -2,8 +2,8 @@ import React, { useRef, useEffect } from 'react';
 
 import MessageItem from './MessageItem';
 import { groupMessagesByDate } from '@/utils/dateFormaters';
-import { Message } from '@/hooks/useSockets';
 import DateDivider from './ChatDevider';
+import { Message } from '@/types/message';
 
 interface MessageListProps {
   messages: Message[];
@@ -29,7 +29,7 @@ const   MessageList: React.FC<MessageListProps> = ({ messages, currentUserId }) 
             <MessageItem
               key={msgIndex}
               message={message}
-              isCurrentUser={message.sender._id === currentUserId}
+              isCurrentUser={message.sender === currentUserId}
             />
           ))}
         </div>

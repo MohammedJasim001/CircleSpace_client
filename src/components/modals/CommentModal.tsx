@@ -79,7 +79,7 @@ const CommentModal: React.FC<CommentModalProps> = ({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-      <div className="bg-gray-800 p-6 rounded-lg w-[40%] h-[60%] max-h-[80vh] relative flex flex-col">
+      <div className="bg-gray-800 p-6 rounded-lg md:w-[40%] md:h-[60%] max-h-[80vh] relative flex flex-col">
         {/* Close Button */}
         <button
           onClick={onClose}
@@ -103,6 +103,7 @@ const CommentModal: React.FC<CommentModalProps> = ({
         </div>
 
         <hr />
+        {comments.length == 0 && <div className="mt-3">No comments yet</div>}
 
         {/* Comments List */}
         <div className="flex-1 overflow-y-auto mt-4 space-y-4">
@@ -118,7 +119,9 @@ const CommentModal: React.FC<CommentModalProps> = ({
                 <FaUserCircle className="text-gray-400 text-3xl" />
               )}
               <div>
-                <p className="text-sm text-gray-300">{comment.author.userName}</p>
+                <p className="text-sm text-gray-300">
+                  {comment.author.userName}
+                </p>
                 <p className="text-sm text-gray-400">{comment.content}</p>
               </div>
             </div>

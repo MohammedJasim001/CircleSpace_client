@@ -6,8 +6,9 @@ import MessageList from "./MessageList";
 import EmptyChat from "./EmptyChat";
 import { useGetPersonalChat } from "@/hooks/useMessages";
 import { getUserId } from "@/utils/userDetails";
-import { Message, useSocket } from "@/hooks/useSockets";
 import MessageSkeleton from "../skeltons/messageSkelton";
+import { Message } from "@/types/message";
+import { useSocket } from "@/hooks/useSockets";
 
 interface ChatWindowProps {
   chatPartnerId: string | null;
@@ -43,7 +44,6 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ chatPartnerId }) => {
     if (!socket) return;
   
     const handleIncomingMessage = (message: Message) => {
-      console.log(message,'message');
       if (
         (message.sender === chatPartnerId && message.receiver === currentUserId) ||
         (message.sender === currentUserId && message.receiver === chatPartnerId)

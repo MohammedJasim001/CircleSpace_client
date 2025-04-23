@@ -152,14 +152,14 @@ const VideoPosts = () => {
   return (
     <div>
       <MainLayout>
-        <div className="flex flex-wrap justify-center gap-4 min-h-screen pt-28 flex-col mr-44">
+        <div className="flex flex-wrap justify-center gap-4 min-h-screen pt-20 sm:pt-28 flex-col md:mr-44">
           {videoPosts && videoPosts.length === 0 ? (
             <p className="text-white">No video posts available</p>
           ) : (
             videoPosts.map((post: Post) => (
               <div
                 key={post._id}
-                className="relative h-[550px] w-[300px] overflow-hidden mb-8 mx-auto bg-black rounded-lg"
+                className="relative h-[550px] w-full] sm:w-[300px] overflow-hidden mb-14 mx-auto bg-black sm:rounded-lg "
               >
                 <div className="video-container relative flex items-center justify-center h-[500px] w-full">
                   <video

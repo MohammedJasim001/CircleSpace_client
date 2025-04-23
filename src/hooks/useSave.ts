@@ -20,9 +20,9 @@ const useSave = () => {
     mutationFn: async ({ userId, postId }: SaveParams): Promise<SaveResponse> => {
       return await savePostApi(userId, postId);
     },
-    onSuccess: (response, { userId }) => {
+    onSuccess: () => {
       // toast.success(response.message || "save status updated successfully!");
-      queryClient.invalidateQueries({ queryKey: ["post",userId] });
+      queryClient.invalidateQueries({ queryKey: ["posts"] });
     },
     onError: (error: AxiosError<{ message: string }>) => {
       const errorMessage =

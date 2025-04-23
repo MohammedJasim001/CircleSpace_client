@@ -35,7 +35,7 @@ function Home() {
 
   return (
     <MainLayout>
-      <div className="flex justify-between p-4  pt-28">
+      <div className="flex justify-between p-4 pt-20 sm:pt-28">
         {/* Posts Section */}
         <div className="grid grid-cols-1 gap-6 max-w-2xl ">
           {posts && posts.length > 0 ? (

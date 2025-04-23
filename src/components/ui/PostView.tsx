@@ -13,6 +13,7 @@ import useLike from "@/hooks/useLikes";
 import useComment from "@/hooks/useComment";
 import CommentModal from "../modals/CommentModal";
 import useSave from "@/hooks/useSave";
+import { useProfile } from "@/hooks/useProfile";
 
 interface Comment {
   _id: string;
@@ -52,28 +53,31 @@ const PostView: React.FC<PostCardProps> = ({ post, currentUserId }) => {
   const router = useRouter();
   const { description, content, likes, createdAt, _id, author, comments } = post;
 
-  // Hooks must always be called, even if the post type is invalid
+  console.log(post,'post');
+
   const [isLiked, setIsLiked] = useState<boolean>(likes.includes(currentUserId));
   const [likeCount, setLikeCount] = useState<number>(likes.length);
+  const [isSaved,setIsSaved] = useState<boolean>(false)
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [newComment, setNewComment] = useState<string>("");
   const [commentsList, setCommentsList] = useState<Comment[]>(comments);
 
-  // Check if the post is saved in localStorage
-  const [isSaved, setIsSaved] = useState<boolean>(() => {
-    return localStorage.getItem(`savedPost_${_id}`) === "true"; // Check if it's saved
-  });
-
+  const {data, refetch} = useProfile(currentUserId)
   const { mutate: toggleLike } = useLike();
   const { mutate: addComment } = useComment(_id);
   const { mutate: savePost } = useSave();
 
-  console.log(currentUserId,'current user id from postview');
+  
+  const userSavedPosts = data?.data?.savedPosts?.map((ele:{_id:string})=>(ele._id ))
+
+  console.log(data,'data ');
 
   useEffect(() => {
-    // Save the saved state to localStorage whenever it changes
-    localStorage.setItem(`savedPost_${_id}`, JSON.stringify(isSaved));
-  }, [isSaved, _id]);
+    if (userSavedPosts && _id) {
+      setIsSaved(userSavedPosts.includes(_id));
+    }
+  }, [userSavedPosts, _id]);
+  
 
   if (!isVideo(content) && !isImage(content)) {
     return null;
@@ -114,16 +118,24 @@ const PostView: React.FC<PostCardProps> = ({ post, currentUserId }) => {
     );
   };
 
-  const handleSaveToggle = () => {
+
+  const handleSaveToggle = (id: string) => {
+    console.log(isSaved,'isSaved');
     savePost(
-      { userId: currentUserId, postId: _id },
+      { userId: currentUserId, postId: id },
       {
         onSuccess: () => {
-          setIsSaved((prev) => !prev); // Toggle the saved state
+          refetch()
+          setIsSaved((prev) => !prev);
+          toast.success(isSaved ? "Post unsaved" : "Post saved");
+        },
+        onError: () => {
+          toast.error("Something went wrong while saving the post");
         },
       }
     );
   };
+  
 
   const formattedTimestamp = formatDistanceToNow(new Date(createdAt), {
     addSuffix: true,
@@ -134,7 +146,7 @@ const PostView: React.FC<PostCardProps> = ({ post, currentUserId }) => {
   };
 
   return (
-    <div className="max-w-md ml-60 text-white rounded-lg shadow-lg overflow-hidden mb-6">
+    <div className=" max-w-md sm:ml-32 lg:ml-60 text-white rounded-lg shadow-lg overflow-hidden mb-9">
       {/* Header Section */}
       <div className="flex items-center justify-between">
         <div
@@ -194,12 +206,12 @@ const PostView: React.FC<PostCardProps> = ({ post, currentUserId }) => {
         {isSaved ? (
           <MdBookmark
             className="text-2xl cursor-pointer hover:text-white"
-            onClick={handleSaveToggle}
+            onClick={()=>handleSaveToggle(_id)}
           />
         ) : (
           <MdBookmarkBorder
             className="text-2xl cursor-pointer hover:text-white"
-            onClick={handleSaveToggle}
+            onClick={()=>handleSaveToggle(_id)}
           />
         )}
       </div>

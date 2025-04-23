@@ -4,8 +4,13 @@ import { useState, useEffect } from "react";
 import Navbar from "@/components/Navbar/Navbar";
 import Sidebar from "@/components/Sidebar/Sidebar";
 import { usePathname } from "next/navigation";
+import Footer from "@/components/Footer/Footer";
 
-export default function MainLayout({ children }: { children: React.ReactNode }) {
+export default function MainLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const [isClient, setIsClient] = useState(false);
   const pathname = usePathname();
 
@@ -22,16 +27,28 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
   const authRoutes = ["/auth/login", "/auth/register", "/auth/otp"];
   const isAuthPage = authRoutes.includes(pathname);
 
-  const shouldHideNavbarOnly = pathname.startsWith('/messages');
+  const shouldHideNavbarOnly = pathname.startsWith("/messages");
 
   return (
-    <div >
-      {/* Render Sidebar conditionally */}
-      {!isAuthPage && <Sidebar />}
+    <div>
+      {/* Sidebar - only visible on md and up */}
+      {!isAuthPage && (
+        <div className="hidden md:block">
+          <Sidebar />
+        </div>
+      )}
+
+      {/* Footer - only visible below md */}
+      {!isAuthPage && (
+        <div className="block md:hidden">
+          <Footer />
+        </div>
+      )}
+
+      {/* Navbar */}
       {!(isAuthPage || shouldHideNavbarOnly) && <Navbar />}
-      <main className="flex-1 ml-0 md:ml-36 ">
-  {children}
-</main>
+
+      <main className="flex-1 ml-0 md:ml-36">{children}</main>
     </div>
   );
 }
