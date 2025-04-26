@@ -1,14 +1,23 @@
+'use client'
+import { useRouter } from 'next/navigation';
 import React from 'react';
+import { IoArrowBack } from 'react-icons/io5';
 
 const AccountPrivacy = () => {
+
+  const router = useRouter()
+
   return (
-    <div className="pt-24 flex justify-center pr-32">
+    <div className="sm:pt-10 flex justify-center sm:pr-32">
       <div className=" p-6 rounded-lg  w-full">
         {/* Title */}
-        <h2 className="text-2xl font-semibold mb-6">Account Privacy</h2>
+        <div className="flex items-center">
+              <IoArrowBack className="sm:hidden text-xl" onClick={()=>router.back()}/>
+              <h1 className="text-xl sm:text-3xl font-bold ml-3 sm:ml-0">Acount and Privacy</h1>
+              </div>
 
         {/* Privacy Section */}
-        <div className="border border-gray-700  p-5 rounded-lg flex gap-2">
+        <div className="border border-gray-700  p-5 rounded-lg flex gap-2 mt-5">
           <div>
           <h3 className="text-lg font-medium mb-4">Private account</h3>
           <p className="text-gray-400 mb-2">

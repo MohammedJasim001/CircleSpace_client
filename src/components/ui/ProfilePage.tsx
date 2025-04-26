@@ -69,7 +69,7 @@ const ProfilePage: React.FC<ProfileProps> = ({
   const closeModal = () => setIsModalOpen(false);
 
   return (
-    <div className="text-white  py-5 mr-40 pt-24 ml-20">
+    <div className="text-white  sm:py-5 sm:mr-40 pt-14 sm:pt-24 sm:ml-32">
       <div className="relative bg-[#6f30d8] h-40 rounded-lg">
         <div className="absolute left-1/2 transform -translate-x-1/2 top-24">
           {userDetails?.profileImage ? (
@@ -132,14 +132,14 @@ const ProfilePage: React.FC<ProfileProps> = ({
             </div>
           ) : (
             <div className="flex gap-4">
-              <Button text="Edit Profile" onClick={()=>router.push('/settings')}/>
+              <Button text="Edit Profile" onClick={()=>router.push('/settings/editProfile')}/>
             </div>
           )}
         </div>
       </div>
 
-      <div className="mt-10 px-6">
-        <div className="flex border-b-2 border-gray-700">
+      <div className="mt-10 px-2 sm:px-6">
+        <div className="flex border-b-2 border-gray-700 ">
           <button
             onClick={() => router.push(`/${userId}`)}
             className={`px-4 py-2 ${

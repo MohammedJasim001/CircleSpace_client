@@ -3,6 +3,7 @@ import useComment from "@/hooks/useComment";
 import React, { useState, useEffect } from "react";
 import { FaUserCircle } from "react-icons/fa";
 import { toast } from "react-toastify";
+import EmojiPickerWrapper from "../EmojiPicker/EmojiPicker";
 
 interface Comment {
   _id: string;
@@ -31,7 +32,12 @@ const CommentModal: React.FC<CommentModalProps> = ({
 }) => {
   const [newComment, setNewComment] = useState("");
   const [commentsList, setCommentsList] = useState<Comment[]>(comments);
+  const [showPicker, setShowPicker] = useState(false);
   const { mutate: addComment } = useComment(postId);
+
+  const handleAddEmoji = (emoji: string) => {
+    setNewComment((prev) => prev + emoji);
+  };
 
   // Update the local comments list when the comments prop changes
   useEffect(() => {
@@ -133,12 +139,20 @@ const CommentModal: React.FC<CommentModalProps> = ({
           onSubmit={handleCommentSubmit}
           className="flex items-center gap-2 "
         >
+          <EmojiPickerWrapper
+            onSelectEmoji={handleAddEmoji}
+            position="fixed top-0"
+            size="sm"
+            isOpen={showPicker}
+            setIsOpen={setShowPicker}
+            iconPosition="absolute -bottom-2 left-4"
+          />
           <input
             type="text"
             value={newComment}
             onChange={(e) => setNewComment(e.target.value)}
             placeholder="Add a comment..."
-            className="w-full px-4 py-2 rounded-lg bg-gray-700 text-white outline-none"
+            className="w-full px-4 py-2 rounded-lg bg-gray-700 text-white outline-none pl-8"
           />
           <button
             type="submit"

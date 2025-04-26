@@ -30,15 +30,15 @@ const PostSavedPage = () => {
     return <div>Error loading profile</div>;
   }
 
-  return (
-    <div className="grid grid-cols-2 md:grid-cols-3 gap-4 px-6 mt-6">
+ return (
+    <div className="grid grid-cols-3 md:grid-cols-3 gap-0.5 sm:gap-4 mt-6 mb-10 sm:mb-0 sm:mr-40 sm:ml-32">
     {userDetails?.data?.savedPosts?.map((post:Post, index:string) => (
       <div key={index} className="rounded-lg overflow-hidden ">
         {post.content?.includes("mp4") ||
         post.content?.includes("youtube") ? (
           <video
             controls
-            className="w-full h-56 object-cover"
+            className="w-full h-44 sm:h-96 object-cover"
             src={post.content}
             // alt={`Post ${index + 1}`}
           >
@@ -48,7 +48,7 @@ const PostSavedPage = () => {
           <img
             src={post.content}
             alt={`Post ${index + 1}`}
-            className="w-full h-56 object-cover"
+            className="w-full h-44 sm:h-96 object-cover"
           />
         )}
       </div>

@@ -60,7 +60,7 @@ export default function UserProfileLayout({
     />
     
       {/* Dynamic Content (Posts/Saved) */}
-      <div className="mt-6 px-6">{children}</div>
+      <div className="mt-6 px-">{children}</div>
 
 
     </div>

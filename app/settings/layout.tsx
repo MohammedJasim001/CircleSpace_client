@@ -22,17 +22,18 @@ const SettingsLayout: React.FC<SettingsLayoutProps> = ({ children }) => {
 
   const isActive = (path: string) => pathname === path;
 
+
   return (
     <MainLayout>
       
-    <div className="w-64  text-white min-h-screen p-4 flex flex-col fixed border-r border-gray-500">
-      <h2 className="mt-24 text-xl font-semibold ml-4 gap-2">Settings</h2>
+    <div className={`w-full sm:w-64 text-white min-h-screen p-4 flex flex-col fixed border-r border-gray-500 ${pathname.split('/')[2]!==undefined && "sm:block hidden"}`}>
+      <h2 className=" mt-10 text-xl font-semibold ml-4 gap-2">Settings</h2>
       <ul className="flex flex-col  gap-5 w-full mt-12 ">
         {/* Top Section */}
         <li 
-         onClick={() => router.push("/settings")}
+         onClick={() => router.push("/settings/editProfile")}
          className={`flex gap-3 cursor-pointer w-full h-12 rounded-lg items-center pl-3 ${
-           isActive("/settings") ? "bg-[#272932]" : "hover:bg-[#32353f]"
+           isActive("/settings/editProfile") ? "bg-[#272932]" : "sm:hover:bg-[#32353f]"
          }`}
         >
           
@@ -43,7 +44,7 @@ const SettingsLayout: React.FC<SettingsLayoutProps> = ({ children }) => {
         <li
         onClick={()=>router.push('/settings/accountPrivacy')}
          className={`flex  gap-3 cursor-pointer w-full h-12 rounded-lg items-center pl-3 ${
-          isActive('/settings/accountPrivacy') ?"bg-[#272932]" : "hover:bg-[#32353f]"}`}
+          isActive('/settings/accountPrivacy') ?"bg-[#272932]" : "sm:hover:bg-[#32353f]"}`}
          >
             <FaLock className="w-6 h-6 text-[#8F8F8F]" />
             <p>Account Privacy</p>
@@ -51,7 +52,7 @@ const SettingsLayout: React.FC<SettingsLayoutProps> = ({ children }) => {
         <li 
         onClick={()=> router.push('/settings/blocked')}
         className={`flex gap-3 cursor-pointer w-full h-12 rounded-lg items-center pl-3 ${
-          isActive('/settings/blocked')?"bg-[#272932]" : "hover:bg-[#32353f]"}`}
+          isActive('/settings/blocked')?"bg-[#272932]" : "sm:hover:bg-[#32353f]"}`}
         >
         
             <MdBlockFlipped className="w-6 h-6 text-[#8F8F8F]" />
@@ -60,7 +61,7 @@ const SettingsLayout: React.FC<SettingsLayoutProps> = ({ children }) => {
         <li 
         onClick={()=> router.push('/settings/muted')}
         className={`flex gap-3 cursor-pointer w-full h-12 rounded-lg items-center pl-3 ${
-          isActive('/settings/muted')?"bg-[#272932]" : "hover:bg-[#32353f]"}`}
+          isActive('/settings/muted')?"bg-[#272932]" : "sm:hover:bg-[#32353f]"}`}
         >
           
             <IoNotificationsOffSharp className="w-6 h-6 text-[#8F8F8F] " />
@@ -68,7 +69,7 @@ const SettingsLayout: React.FC<SettingsLayoutProps> = ({ children }) => {
         </li>
        
 
-        <hr className="w-full border-gray-500 mt-40 text-[#8F8F8F]" />
+        <hr className="w-full border-gray-500 mt-32 sm:mt-44 text-[#8F8F8F]" />
 
         <li
          onClick={handleLogout}
@@ -79,7 +80,7 @@ const SettingsLayout: React.FC<SettingsLayoutProps> = ({ children }) => {
         </li>
       </ul>
     </div>
-    <div className="flex-1 ml-96">{children}</div>
+    <div className={`flex-1 p-2 sm:p-0 sm:ml-96 ${pathname.split('/')[2]===undefined && "hidden"}`}>{children}</div>
     </MainLayout>
   );
 };

@@ -14,6 +14,7 @@ import useComment from "@/hooks/useComment";
 import CommentModal from "../modals/CommentModal";
 import useSave from "@/hooks/useSave";
 import { useProfile } from "@/hooks/useProfile";
+import EmojiPickerWrapper from "../EmojiPicker/EmojiPicker";
 
 interface Comment {
   _id: string;
@@ -51,33 +52,33 @@ const isImage = (url: string) => {
 
 const PostView: React.FC<PostCardProps> = ({ post, currentUserId }) => {
   const router = useRouter();
-  const { description, content, likes, createdAt, _id, author, comments } = post;
+  const { description, content, likes, createdAt, _id, author, comments } =
+    post;
 
-  console.log(post,'post');
-
-  const [isLiked, setIsLiked] = useState<boolean>(likes.includes(currentUserId));
+  const [isLiked, setIsLiked] = useState<boolean>(
+    likes.includes(currentUserId)
+  );
   const [likeCount, setLikeCount] = useState<number>(likes.length);
-  const [isSaved,setIsSaved] = useState<boolean>(false)
+  const [isSaved, setIsSaved] = useState<boolean>(false);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [newComment, setNewComment] = useState<string>("");
   const [commentsList, setCommentsList] = useState<Comment[]>(comments);
+  const [showPicker, setShowPicker] = useState(false);
 
-  const {data, refetch} = useProfile(currentUserId)
+  const { data, refetch } = useProfile(currentUserId);
   const { mutate: toggleLike } = useLike();
   const { mutate: addComment } = useComment(_id);
   const { mutate: savePost } = useSave();
 
-  
-  const userSavedPosts = data?.data?.savedPosts?.map((ele:{_id:string})=>(ele._id ))
-
-  console.log(data,'data ');
+  const userSavedPosts = data?.data?.savedPosts?.map(
+    (ele: { _id: string }) => ele._id
+  );
 
   useEffect(() => {
     if (userSavedPosts && _id) {
       setIsSaved(userSavedPosts.includes(_id));
     }
   }, [userSavedPosts, _id]);
-  
 
   if (!isVideo(content) && !isImage(content)) {
     return null;
@@ -113,19 +114,19 @@ const PostView: React.FC<PostCardProps> = ({ post, currentUserId }) => {
         onSuccess: (response: { data: Comment }) => {
           setCommentsList((prev) => [...prev, response.data]);
           setNewComment("");
+          setShowPicker(false)
         },
       }
     );
   };
 
-
   const handleSaveToggle = (id: string) => {
-    console.log(isSaved,'isSaved');
+    console.log(isSaved, "isSaved");
     savePost(
       { userId: currentUserId, postId: id },
       {
         onSuccess: () => {
-          refetch()
+          refetch();
           setIsSaved((prev) => !prev);
           toast.success(isSaved ? "Post unsaved" : "Post saved");
         },
@@ -135,7 +136,6 @@ const PostView: React.FC<PostCardProps> = ({ post, currentUserId }) => {
       }
     );
   };
-  
 
   const formattedTimestamp = formatDistanceToNow(new Date(createdAt), {
     addSuffix: true,
@@ -145,8 +145,12 @@ const PostView: React.FC<PostCardProps> = ({ post, currentUserId }) => {
     setIsModalOpen((prev) => !prev);
   };
 
+  const handleAddEmoji = (emoji: string) => {
+    setNewComment((prev) => prev + emoji);
+  };
+
   return (
-    <div className=" max-w-md sm:ml-32 lg:ml-60 text-white rounded-lg shadow-lg overflow-hidden mb-9">
+    <div className=" lg:w-[35vw] sm:ml-32 lg:ml-60 text-white rounded-lg shadow-lg overflow-hidden mb-9">
       {/* Header Section */}
       <div className="flex items-center justify-between">
         <div
@@ -179,7 +183,7 @@ const PostView: React.FC<PostCardProps> = ({ post, currentUserId }) => {
         <img
           src={content}
           alt="Post Media"
-          className="w-full h-auto object-contain rounded-t-lg"
+          className="w-full object-contain rounded-t-lg max-h-[500px]"
         />
       )}
 
@@ -206,12 +210,12 @@ const PostView: React.FC<PostCardProps> = ({ post, currentUserId }) => {
         {isSaved ? (
           <MdBookmark
             className="text-2xl cursor-pointer hover:text-white"
-            onClick={()=>handleSaveToggle(_id)}
+            onClick={() => handleSaveToggle(_id)}
           />
         ) : (
           <MdBookmarkBorder
             className="text-2xl cursor-pointer hover:text-white"
-            onClick={()=>handleSaveToggle(_id)}
+            onClick={() => handleSaveToggle(_id)}
           />
         )}
       </div>
@@ -242,16 +246,24 @@ const PostView: React.FC<PostCardProps> = ({ post, currentUserId }) => {
       {/* Add Comment */}
       <form
         onSubmit={handleCommentSubmit}
-        className="flex items-center gap-2 px-4 pb-2"
+        className="flex items-center gap-2 px-4 pb-2 bottom-3"
       >
+        <EmojiPickerWrapper
+          onSelectEmoji={handleAddEmoji}
+          position="absolute bottom-5 -left-4 sm:left-38"
+          size="sm"
+          isOpen={showPicker}
+          setIsOpen={setShowPicker}
+          iconPosition="absolute -bottom-2 left-3"
+        />
         <input
           type="text"
           placeholder="Add a comment..."
           value={newComment}
           onChange={(e) => setNewComment(e.target.value)}
-          className="bg-[#1a1c26] text-sm text-white px-3 py-1 w-full rounded"
+          className="bg-[#1a1c26] text-sm text-white px-3 py-1 w-full rounded pl-7"
         />
-        <button type="submit" className="text-sm text-blue-500 hover:underline">
+        <button type="submit" className={`text-sm text-blue-500 hover:underline`}>
           Post
         </button>
       </form>

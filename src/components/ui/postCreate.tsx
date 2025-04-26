@@ -62,7 +62,7 @@ export default function PostCreate({ onSubmit, isPending }: PostFormProps) {
         <div>
           <div className="w-full mb-4">
             {preview ? (
-              postContent && postContent.type.includes("video") ? ( // Check if it's a video
+              postContent && postContent.type.includes("video") ? ( 
                 <video
                   src={preview}
                   className="w-full h-64 object-cover rounded-lg"

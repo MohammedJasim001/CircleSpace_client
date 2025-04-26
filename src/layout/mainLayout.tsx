@@ -27,7 +27,8 @@ export default function MainLayout({
   const authRoutes = ["/auth/login", "/auth/register", "/auth/otp"];
   const isAuthPage = authRoutes.includes(pathname);
 
-  const shouldHideNavbarOnly = pathname.startsWith("/messages");
+  const whenMessages = pathname.startsWith("/messages") 
+  const whenSettings =  pathname.startsWith("/settings");
 
   return (
     <div>
@@ -39,14 +40,14 @@ export default function MainLayout({
       )}
 
       {/* Footer - only visible below md */}
-      {!isAuthPage && (
-        <div className="block md:hidden">
+      {!(isAuthPage || whenMessages ) && (
+        <div className="block md:hidden ">
           <Footer />
         </div>
       )}
 
       {/* Navbar */}
-      {!(isAuthPage || shouldHideNavbarOnly) && <Navbar />}
+      {!(isAuthPage || whenMessages || whenSettings) && <Navbar />}
 
       <main className="flex-1 ml-0 md:ml-36">{children}</main>
     </div>

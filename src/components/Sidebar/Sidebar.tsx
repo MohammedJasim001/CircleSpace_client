@@ -102,7 +102,7 @@ const Sidebar: React.FC = () => {
         {/* Bottom Section */}
         <li>
           <Link
-            href="/settings"
+            href="/settings/editProfile"
             passHref
             className={`block ${
               isActive("/settings") ? "text-[#6a3aba]" : "text-[#8F8F8F]"

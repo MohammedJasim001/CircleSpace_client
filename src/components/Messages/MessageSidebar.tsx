@@ -87,7 +87,7 @@ const MessageSidebar: React.FC = () => {
 
   const handleChatSelect = useCallback(
     (userId: string) => {
-      router.replace(`/messages/${userId}`);
+      router.push(`/messages/${userId}`);
     },
     [router]
   );
@@ -95,7 +95,7 @@ const MessageSidebar: React.FC = () => {
   if (isLoading) return <MessageSidebarSkeleton />;
 
   return (
-    <div className="w-full md:w-1/4 border-r border-[#272932] h-full p-4">
+    <div className={`${recieverId&& "hidden sm:block"} w-full md:w-1/4 border-r border-[#272932] h-full p-4`}>
       <h2 className="font-bold text-lg mb-4">Messages</h2>
       <ul>
         {recieverId &&
