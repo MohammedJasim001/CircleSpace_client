@@ -25,7 +25,7 @@ export const registerApi = async (
  values:any
 ): Promise<RegistrationResponse> => {
   try {
-    const res = await axios.post('http://localhost:5010/api/user/register', values, {
+    const res = await axios.post('https://circlespace-server.onrender.com/api/user/register', values, {
       headers: {
         'Content-Type': 'application/json',
       },
@@ -58,7 +58,7 @@ export const registerApi = async (
 export const OtpVerifyApi = async (values: { email: string; otp: number }): Promise<OtpVerifyResponse> => {
   try {
     // Send the OTP and email for verification
-    const res = await axios.post('http://localhost:5010/api/user/verifyotp', values ,  {
+    const res = await axios.post('https://circlespace-server.onrender.com/api/user/verifyotp', values ,  {
       headers: {
         'Content-Type': 'application/json',
       },
@@ -96,7 +96,7 @@ export const OtpVerifyApi = async (values: { email: string; otp: number }): Prom
 
 export const profileImageApi = async (formdata:FormData) =>{
   try {
-    const res = await axios.post('http://localhost:5010/api/user/profileimage',formdata,{
+    const res = await axios.post('https://circlespace-server.onrender.com/api/user/profileimage',formdata,{
       headers: {
          "Content-Type":"multipart/form-data",
       },
