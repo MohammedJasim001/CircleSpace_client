@@ -1,6 +1,6 @@
 import { io, Socket } from "socket.io-client";
 
-const SOCKET_URL = "http://localhost:5010"; // Backend URL
+const SOCKET_URL = process.env.SOCKET_URL; 
 
 let socket: Socket | null = null;
 
